@@ -63,11 +63,16 @@ class Usuario(AbstractBaseUser, PermissionsMixin, TimestampedModel):
         ACTIVO = 'ACTIVO', 'Activo'
         SUSPENDIDO = 'SUSPENDIDO', 'Suspendido'
 
+    class TipoUsuario(models.TextChoices):
+        ESTUDIANTE = 'ESTUDIANTE', 'Estudiante'
+        PROFESOR = 'PROFESOR', 'Profesor'
+
     matricula = models.CharField(max_length=9, unique=True, validators=[matricula_validator])
     nombre = models.CharField(max_length=150)
     email = models.EmailField(unique=True)
     telefono = models.CharField(max_length=15, validators=[telefono_validator])
     estado = models.CharField(max_length=10, choices=Estado.choices, default=Estado.ACTIVO)
+    tipo_usuario = models.CharField(max_length=20, choices=TipoUsuario.choices, default=TipoUsuario.ESTUDIANTE)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -172,6 +177,7 @@ class Libro(TimestampedModel):
     isbn = models.CharField(max_length=20, unique=True, validators=[validar_isbn])
     fecha_publicacion = models.DateField()
     disponible = models.BooleanField(default=True)
+    stock = models.PositiveIntegerField(default=1)
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT, related_name='libros')
     autores = models.ManyToManyField(Autor, related_name='libros')
 
@@ -192,7 +198,9 @@ class Prestamo(TimestampedModel):
         VENCIDO = 'VENCIDO', 'Vencido'
 
     usuario = models.ForeignKey(Usuario, on_delete=models.PROTECT, related_name='prestamos')
-    bibliotecario = models.ForeignKey(Bibliotecario, on_delete=models.PROTECT, related_name='prestamos_gestionados')
+    bibliotecario = models.ForeignKey(
+        Bibliotecario, on_delete=models.PROTECT, related_name='prestamos_gestionados', null=True, blank=True,
+    )
     libro = models.ForeignKey(Libro, on_delete=models.PROTECT, related_name='prestamos')
     fecha_inicio = models.DateField(auto_now_add=True)
     fecha_dev_esperada = models.DateField()
@@ -274,3 +282,30 @@ class Multa(TimestampedModel):
 
     def __str__(self):
         return f'Multa #{self.pk} - {self.usuario} (${self.monto})'
+
+
+class ConfiguracionBiblioteca(models.Model):
+    tarifa_multa_diaria = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(0)])
+    dias_maximos_prestamo = models.PositiveIntegerField()
+
+    class Meta:
+        verbose_name = 'Configuracion de la Biblioteca'
+        verbose_name_plural = 'Configuracion de la Biblioteca'
+
+    def __str__(self):
+        return 'Configuracion de la Biblioteca'
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass
+
+    @classmethod
+    def cargar(cls):
+        instancia, _ = cls.objects.get_or_create(
+            pk=1,
+            defaults={'tarifa_multa_diaria': 5, 'dias_maximos_prestamo': 14},
+        )
+        return instancia

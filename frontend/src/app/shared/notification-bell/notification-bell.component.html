@@ -1,0 +1,47 @@
+<div class="relative">
+  <button
+    type="button"
+    (click)="alternar()"
+    class="relative p-2 text-stone-500 hover:text-stone-900 hover:bg-stone-100 rounded-full transition-colors"
+    aria-label="Notificaciones"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+      <path
+        d="M12 2a6 6 0 00-6 6v3.09c0 .71-.28 1.39-.78 1.9L4 14.24V16h16v-1.76l-1.22-1.25a2.68 2.68 0 01-.78-1.9V8a6 6 0 00-6-6zm0 20a2.5 2.5 0 002.45-2H9.55A2.5 2.5 0 0012 22z"
+      />
+    </svg>
+    @if (notificacionesService.cantidad() > 0) {
+      <span
+        class="absolute top-0.5 right-0.5 inline-flex items-center justify-center min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-red-600 text-white text-[10px] font-bold"
+      >
+        {{ notificacionesService.cantidad() }}
+      </span>
+    }
+  </button>
+
+  @if (abierto()) {
+    <div
+      class="absolute right-0 top-full mt-2 w-80 max-w-[90vw] bg-white rounded-2xl shadow-xl border border-stone-100 overflow-hidden z-30 animate-in fade-in zoom-in-95 duration-150"
+    >
+      <div class="px-5 py-3.5 border-b border-stone-100">
+        <h3 class="text-sm font-bold text-stone-900">Notificaciones</h3>
+      </div>
+
+      @if (notificacionesService.notificaciones().length === 0) {
+        <p class="px-5 py-8 text-center text-sm text-stone-400">No tienes notificaciones nuevas.</p>
+      } @else {
+        <ul class="max-h-80 overflow-y-auto divide-y divide-stone-100">
+          @for (item of notificacionesService.notificaciones(); track item.id) {
+            <li class="px-5 py-3.5 flex gap-3 items-start">
+              <span
+                class="mt-0.5 w-2 h-2 rounded-full shrink-0"
+                [class]="item.tipo === 'multa' ? 'bg-red-500' : 'bg-amber-500'"
+              ></span>
+              <p class="text-sm text-stone-700 leading-snug">{{ item.mensaje }}</p>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  }
+</div>

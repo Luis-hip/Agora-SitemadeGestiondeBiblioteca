@@ -1,0 +1,22 @@
+<div class="min-h-screen bg-stone-50 flex">
+  <aside class="w-60 shrink-0 bg-stone-900 text-stone-300 min-h-screen sticky top-0 flex flex-col">
+    <div class="px-6 py-5 border-b border-stone-800">
+      <span class="text-white font-bold text-lg">Panel Bibliotecario</span>
+    </div>
+    <nav class="flex-1 py-4 px-3 space-y-1">
+      @for (modulo of modulos; track modulo.ruta) {
+        <a
+          [routerLink]="modulo.ruta"
+          routerLinkActive="bg-stone-800 text-white"
+          class="block px-4 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-stone-800 hover:text-white"
+        >
+          {{ modulo.etiqueta }}
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <main class="flex-1 min-w-0 px-6 sm:px-10 py-10">
+    <router-outlet />
+  </main>
+</div>

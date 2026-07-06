@@ -1,0 +1,273 @@
+<div class="min-h-screen bg-stone-50">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+    <header class="mb-8 flex items-center gap-4">
+      @if (perfil(); as p) {
+        <img [src]="urlAvatarUsuario(p.usuario.nombre)" [alt]="p.usuario.nombre" class="w-14 h-14 rounded-full shadow-sm shrink-0" />
+      }
+      <div>
+        <h1 class="text-3xl font-bold text-stone-900 tracking-tight">Mi Perfil</h1>
+        @if (perfil(); as p) {
+          <p class="text-stone-500 mt-1">{{ p.usuario.nombre }} &middot; {{ p.usuario.email }}</p>
+        }
+      </div>
+    </header>
+
+    @if (error()) {
+      <div class="mb-6 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium">
+        {{ error() }}
+      </div>
+    }
+
+    @if (cargando()) {
+      <div class="space-y-4">
+        <div class="h-10 w-full max-w-lg bg-stone-200 rounded-lg animate-pulse"></div>
+        <div class="h-32 w-full bg-white border border-stone-100 rounded-2xl animate-pulse"></div>
+        <div class="h-32 w-full bg-white border border-stone-100 rounded-2xl animate-pulse"></div>
+      </div>
+    } @else if (perfil(); as p) {
+      <div
+        role="tablist"
+        class="flex flex-wrap border-b border-stone-200 mb-8"
+        (keydown)="alPresionarTeclaEnPestanas($event)"
+      >
+        @for (tab of pestanas; track tab.id) {
+          <button
+            #tabBtn
+            role="tab"
+            type="button"
+            [attr.aria-selected]="pestanaActiva() === tab.id"
+            [attr.tabindex]="pestanaActiva() === tab.id ? 0 : -1"
+            (click)="seleccionarPestana(tab.id)"
+            class="px-4 sm:px-6 py-3 text-sm font-bold border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/40 rounded-t-lg"
+            [class]="
+              pestanaActiva() === tab.id
+                ? 'border-amber-700 text-amber-800'
+                : 'border-transparent text-stone-500 hover:text-stone-700'
+            "
+          >
+            {{ tab.etiqueta }}
+          </button>
+        }
+      </div>
+
+      @switch (pestanaActiva()) {
+        @case ('general') {
+          <div class="space-y-6">
+            @if (tieneMultasPendientes()) {
+              <div
+                class="px-5 py-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 flex items-center justify-between gap-4"
+              >
+                <p class="text-sm font-bold">
+                  Tienes {{ p.multas_pendientes.length }} multa(s) pendiente(s) de pago. Tu cuenta esta suspendida
+                  para nuevos prestamos hasta liquidarlas.
+                </p>
+                <button
+                  type="button"
+                  (click)="seleccionarPestana('multas')"
+                  class="shrink-0 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+                >
+                  Ver multas
+                </button>
+              </div>
+            }
+
+            <div class="bg-white rounded-2xl border border-stone-100 shadow-sm p-6">
+              <h2 class="text-lg font-bold text-stone-900 mb-4">Resumen de prestamos activos</h2>
+              @if (p.prestamos_activos.length === 0) {
+                <p class="text-stone-400 text-sm">No tienes prestamos activos en este momento.</p>
+              } @else {
+                <ul class="divide-y divide-stone-100">
+                  @for (prestamo of p.prestamos_activos; track prestamo.id) {
+                    <li class="py-3 flex items-center justify-between text-sm">
+                      <span class="font-bold text-stone-900">{{ prestamo.libro.titulo }}</span>
+                      <span class="text-stone-500">Vence: {{ prestamo.fecha_dev_esperada }}</span>
+                    </li>
+                  }
+                </ul>
+              }
+            </div>
+          </div>
+        }
+
+        @case ('activos') {
+          <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+            @if (p.prestamos_activos.length === 0) {
+              <p class="p-6 text-stone-400 text-sm">No tienes prestamos activos en este momento.</p>
+            } @else {
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-stone-50 text-stone-500 text-xs uppercase tracking-wider border-b border-stone-100">
+                    <th class="px-6 py-4 font-medium">Libro</th>
+                    <th class="px-6 py-4 font-medium">Fecha prestamo</th>
+                    <th class="px-6 py-4 font-medium">Vencimiento</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-100 text-sm">
+                  @for (prestamo of p.prestamos_activos; track prestamo.id) {
+                    <tr>
+                      <td class="px-6 py-4 font-bold text-stone-900">{{ prestamo.libro.titulo }}</td>
+                      <td class="px-6 py-4 text-stone-600">{{ prestamo.fecha_inicio }}</td>
+                      <td class="px-6 py-4 text-stone-600">{{ prestamo.fecha_dev_esperada }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+          </div>
+        }
+
+        @case ('multas') {
+          <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+            @if (p.multas_pendientes.length === 0) {
+              <p class="p-6 text-stone-400 text-sm">No tienes multas pendientes. &#127881;</p>
+            } @else {
+              <ul class="divide-y divide-stone-100">
+                @for (multa of p.multas_pendientes; track multa.id) {
+                  <li>
+                    <button
+                      type="button"
+                      (click)="abrirMulta(multa)"
+                      class="w-full text-left px-6 py-4 flex items-center justify-between gap-4 hover:bg-red-50/50 transition-colors"
+                    >
+                      <div>
+                        <p class="font-bold text-stone-900">{{ multa.prestamo.libro.titulo }}</p>
+                        <p class="text-xs text-red-600 font-bold uppercase tracking-wider mt-0.5">
+                          {{ multa.dias_atraso }} dias de atraso
+                        </p>
+                      </div>
+                      <span class="font-bold text-red-600 text-lg">${{ multa.monto }}</span>
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        }
+
+        @case ('historial') {
+          <div>
+            <div class="flex gap-2 mb-5">
+              <button
+                type="button"
+                (click)="seleccionarSubPestanaHistorial('prestamos')"
+                class="px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors"
+                [class]="
+                  subPestanaHistorial() === 'prestamos'
+                    ? 'bg-stone-900 text-white'
+                    : 'bg-white text-stone-500 border border-stone-200 hover:bg-stone-50'
+                "
+              >
+                Prestamos
+              </button>
+              <button
+                type="button"
+                (click)="seleccionarSubPestanaHistorial('multas')"
+                class="px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors"
+                [class]="
+                  subPestanaHistorial() === 'multas'
+                    ? 'bg-stone-900 text-white'
+                    : 'bg-white text-stone-500 border border-stone-200 hover:bg-stone-50'
+                "
+              >
+                Multas Pagadas
+              </button>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+              @if (subPestanaHistorial() === 'prestamos') {
+                @if (p.historial_prestamos.length === 0) {
+                  <p class="p-6 text-stone-400 text-sm">Aun no tienes historial de prestamos.</p>
+                } @else {
+                  <table class="w-full text-left border-collapse">
+                    <thead>
+                      <tr class="bg-stone-50 text-stone-500 text-xs uppercase tracking-wider border-b border-stone-100">
+                        <th class="px-6 py-4 font-medium">Libro</th>
+                        <th class="px-6 py-4 font-medium">Fecha prestamo</th>
+                        <th class="px-6 py-4 font-medium">Vencimiento</th>
+                        <th class="px-6 py-4 font-medium text-right">Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-100 text-sm">
+                      @for (prestamo of p.historial_prestamos; track prestamo.id) {
+                        <tr>
+                          <td class="px-6 py-4 font-bold text-stone-900">{{ prestamo.libro.titulo }}</td>
+                          <td class="px-6 py-4 text-stone-600">{{ prestamo.fecha_inicio }}</td>
+                          <td class="px-6 py-4 text-stone-600">{{ prestamo.fecha_dev_esperada }}</td>
+                          <td class="px-6 py-4 text-right">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-stone-100 text-stone-600">
+                              {{ prestamo.estado }}
+                            </span>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                }
+              } @else {
+                @if (p.multas_pagadas.length === 0) {
+                  <p class="p-6 text-stone-400 text-sm">Aun no tienes multas pagadas.</p>
+                } @else {
+                  <ul class="divide-y divide-stone-100">
+                    @for (multa of p.multas_pagadas; track multa.id) {
+                      <li>
+                        <button
+                          type="button"
+                          (click)="abrirMulta(multa)"
+                          class="w-full text-left px-6 py-4 flex items-center justify-between gap-4 hover:bg-stone-50 transition-colors"
+                        >
+                          <div>
+                            <p class="font-bold text-stone-900">{{ multa.prestamo.libro.titulo }}</p>
+                            <p class="text-xs text-stone-500 mt-0.5">Pagada el {{ multa.fecha_pago }}</p>
+                          </div>
+                          <span class="font-bold text-stone-700 text-lg">${{ multa.monto }}</span>
+                        </button>
+                      </li>
+                    }
+                  </ul>
+                }
+              }
+            </div>
+          </div>
+        }
+
+        @case ('config') {
+          <div class="bg-white rounded-2xl border border-stone-100 shadow-sm p-6 max-w-md">
+            <h2 class="text-lg font-bold text-stone-900 mb-4">Datos de la cuenta</h2>
+            <dl class="space-y-3 text-sm">
+              <div class="flex justify-between">
+                <dt class="text-stone-500 font-bold">Matricula</dt>
+                <dd class="text-stone-900 font-mono">{{ p.usuario.matricula }}</dd>
+              </div>
+              <div class="flex justify-between">
+                <dt class="text-stone-500 font-bold">Telefono</dt>
+                <dd class="text-stone-900">{{ p.usuario.telefono }}</dd>
+              </div>
+              <div class="flex justify-between">
+                <dt class="text-stone-500 font-bold">Tipo</dt>
+                <dd class="text-stone-900">{{ p.usuario.tipo_usuario }}</dd>
+              </div>
+              <div class="flex justify-between">
+                <dt class="text-stone-500 font-bold">Estado de la cuenta</dt>
+                <dd
+                  class="font-bold"
+                  [class]="p.usuario.estado === 'ACTIVO' ? 'text-emerald-700' : 'text-red-700'"
+                >
+                  {{ p.usuario.estado }}
+                </dd>
+              </div>
+            </dl>
+          </div>
+        }
+      }
+    }
+  </div>
+
+  @if (multaSeleccionada(); as multa) {
+    <app-multa-detalle-modal
+      [multa]="multa"
+      [procesando]="pagando()"
+      (cerrar)="cerrarMulta()"
+      (pagarAhora)="confirmarPago()"
+    />
+  }
+</div>

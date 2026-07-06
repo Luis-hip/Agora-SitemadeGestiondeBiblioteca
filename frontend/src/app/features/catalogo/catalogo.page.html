@@ -1,0 +1,97 @@
+<div class="min-h-screen bg-stone-50">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold text-stone-900 tracking-tight">Catalogo</h1>
+      <p class="text-stone-500 mt-1">Explora los libros disponibles en la biblioteca de Agora.</p>
+    </header>
+
+    <div class="flex items-center gap-3 mb-8">
+      <button
+        type="button"
+        (click)="abrirFiltros()"
+        class="relative flex items-center gap-2 px-5 py-2.5 bg-white border border-stone-200 text-stone-700 rounded-lg text-sm font-bold hover:bg-stone-50 hover:border-amber-300 transition-colors shadow-sm"
+      >
+        Filtros
+        @if (cantidadFiltrosActivos() > 0) {
+          <span
+            class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded-full bg-amber-600 text-white text-[11px] font-bold"
+          >
+            {{ cantidadFiltrosActivos() }}
+          </span>
+        }
+      </button>
+    </div>
+
+    @if (error()) {
+      <div class="mb-6 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium">
+        {{ error() }}
+      </div>
+    }
+
+    @if (cargando()) {
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+        @for (placeholder of placeholdersSkeleton; track $index) {
+          <div class="flex flex-col">
+            <div class="aspect-[2/3] bg-stone-200 rounded-xl mb-3 animate-pulse"></div>
+            <div class="h-4 w-3/4 bg-stone-200 rounded animate-pulse mb-2"></div>
+            <div class="h-3 w-1/2 bg-stone-200 rounded animate-pulse"></div>
+          </div>
+        }
+      </div>
+    } @else if (libros().length === 0) {
+      <div class="text-center py-20 text-stone-400">
+        <p class="text-lg font-medium">No se encontraron libros con estos filtros.</p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+        @for (libro of libros(); track libro.id) {
+          <button
+            type="button"
+            (click)="abrirDetalle(libro)"
+            class="text-left flex flex-col group focus-visible:outline-none"
+          >
+            <div
+              class="relative aspect-[2/3] rounded-xl overflow-hidden bg-stone-200 mb-3 shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1"
+            >
+              <app-book-cover [isbn]="libro.isbn" [titulo]="libro.titulo" />
+              <span
+                class="absolute top-2 right-2 text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wider shadow-sm text-white"
+                [class]="libro.disponible ? 'bg-emerald-600' : 'bg-red-600'"
+              >
+                {{ libro.disponible ? 'Disponible' : 'Prestado' }}
+              </span>
+            </div>
+            <p class="font-bold text-stone-900 group-hover:text-amber-700 transition-colors leading-tight truncate">
+              {{ libro.titulo }}
+            </p>
+            <p class="text-stone-500 text-xs mt-0.5 truncate">
+              {{ libro.autores.length ? libro.autores[0].nombre : 'Autor desconocido' }}
+            </p>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 mt-1">{{
+              libro.categoria.nombre
+            }}</span>
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  @if (libroSeleccionado(); as libro) {
+    <app-libro-detalle-modal
+      [libro]="libro"
+      [enviando]="enviandoPrestamo()"
+      (cerrar)="cerrarDetalle()"
+      (solicitarPrestamo)="confirmarPrestamo(libro)"
+    />
+  }
+
+  @if (modalFiltrosAbierto()) {
+    <app-filtros-catalogo-modal
+      [categorias]="categorias()"
+      [categoriaIdsIniciales]="categoriaIdsSeleccionadas()"
+      [soloDisponiblesInicial]="soloDisponibles()"
+      (cerrar)="cerrarFiltros()"
+      (aplicar)="aplicarFiltros($event)"
+    />
+  }
+</div>

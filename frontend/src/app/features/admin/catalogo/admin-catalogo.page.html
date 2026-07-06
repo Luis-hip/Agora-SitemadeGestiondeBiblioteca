@@ -1,0 +1,149 @@
+<div>
+  <header class="mb-6">
+    <h1 class="text-3xl font-bold text-stone-900 tracking-tight">Catalogo</h1>
+    <p class="text-stone-500 mt-1">Administra los libros y categorias de la biblioteca.</p>
+  </header>
+
+  <div class="flex border-b border-stone-200 mb-6">
+    <button
+      type="button"
+      (click)="seleccionarPestana('libros')"
+      class="px-6 py-3 text-sm font-bold border-b-2 transition-colors"
+      [class]="
+        pestanaActiva() === 'libros' ? 'border-amber-700 text-amber-800' : 'border-transparent text-stone-500 hover:text-stone-700'
+      "
+    >
+      Catalogo de Libros
+    </button>
+    <button
+      type="button"
+      (click)="seleccionarPestana('categorias')"
+      class="px-6 py-3 text-sm font-bold border-b-2 transition-colors"
+      [class]="
+        pestanaActiva() === 'categorias' ? 'border-amber-700 text-amber-800' : 'border-transparent text-stone-500 hover:text-stone-700'
+      "
+    >
+      Categorias
+    </button>
+  </div>
+
+  <div class="flex justify-end mb-6">
+    <button
+      type="button"
+      (click)="pestanaActiva() === 'libros' ? abrirCrearLibro() : abrirCrearCategoria()"
+      class="flex items-center gap-2 bg-stone-900 hover:bg-stone-800 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm"
+    >
+      + {{ pestanaActiva() === 'libros' ? 'Agregar nuevo libro' : 'Nueva Categoria' }}
+    </button>
+  </div>
+
+  <div class="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+    @if (cargando()) {
+      <div class="p-6 space-y-3">
+        @for (placeholder of [1, 2, 3]; track placeholder) {
+          <div class="h-10 bg-stone-100 rounded-lg animate-pulse"></div>
+        }
+      </div>
+    } @else if (pestanaActiva() === 'libros') {
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-stone-50 text-stone-500 text-xs uppercase tracking-wider border-b border-stone-100">
+            <th class="px-6 py-4 font-medium">Libro</th>
+            <th class="px-6 py-4 font-medium">Categoria</th>
+            <th class="px-6 py-4 font-medium">ISBN</th>
+            <th class="px-6 py-4 font-medium text-center">Stock</th>
+            <th class="px-6 py-4 font-medium text-right">Estado</th>
+            <th class="px-6 py-4 font-medium text-center w-16"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-stone-100 text-sm">
+          @for (libro of libros(); track libro.id) {
+            <tr class="hover:bg-stone-50/50 transition-colors">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 aspect-[2/3] shrink-0 rounded-md overflow-hidden bg-stone-200 shadow-sm">
+                    <app-book-cover [isbn]="libro.isbn" [titulo]="libro.titulo" />
+                  </div>
+                  <div class="min-w-0">
+                    <p class="font-bold text-stone-900 truncate">{{ libro.titulo }}</p>
+                    <p class="text-stone-500 text-xs mt-0.5 truncate">
+                      {{ libro.autores.length ? libro.autores[0].nombre : 'Autor desconocido' }}
+                    </p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 text-stone-600">{{ libro.categoria.nombre }}</td>
+              <td class="px-6 py-4 text-stone-500 font-mono text-xs">{{ libro.isbn }}</td>
+              <td class="px-6 py-4 text-center font-bold text-stone-700">{{ libro.stock }}</td>
+              <td class="px-6 py-4 text-right">
+                <span
+                  class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white"
+                  [class]="libro.disponible ? 'bg-emerald-600' : 'bg-red-600'"
+                >
+                  {{ libro.disponible ? 'Disponible' : 'Prestado' }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-center">
+                <app-three-dot-menu [acciones]="acciones" (accionSeleccionada)="alSeleccionarAccionLibro(libro, $event)" />
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-stone-50 text-stone-500 text-xs uppercase tracking-wider border-b border-stone-100">
+            <th class="px-6 py-4 font-medium w-1/4">Nombre</th>
+            <th class="px-6 py-4 font-medium">Descripcion</th>
+            <th class="px-6 py-4 font-medium text-center w-16"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-stone-100 text-sm">
+          @for (categoria of categorias(); track categoria.id) {
+            <tr class="hover:bg-stone-50/50 transition-colors">
+              <td class="px-6 py-4 font-bold text-stone-900">{{ categoria.nombre }}</td>
+              <td class="px-6 py-4 text-stone-500">{{ categoria.descripcion }}</td>
+              <td class="px-6 py-4 text-center">
+                <app-three-dot-menu
+                  [acciones]="acciones"
+                  (accionSeleccionada)="alSeleccionarAccionCategoria(categoria, $event)"
+                />
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+@if (modalLibroAbierto()) {
+  <app-libro-form-modal
+    [categorias]="categorias()"
+    [autores]="autores()"
+    [libro]="libroEnEdicion()"
+    [guardando]="guardandoLibro()"
+    (cerrar)="cerrarModalLibro()"
+    (guardar)="guardarLibro($event)"
+  />
+}
+
+@if (modalCategoriaAbierto()) {
+  <app-categoria-form-modal
+    [categoria]="categoriaEnEdicion()"
+    [guardando]="guardandoCategoria()"
+    (cerrar)="cerrarModalCategoria()"
+    (guardar)="guardarCategoria($event)"
+  />
+}
+
+@if (elementoAEliminar(); as elemento) {
+  <app-confirmar-eliminar-modal
+    [titulo]="elemento.tipo === 'libro' ? 'Eliminar Libro' : 'Eliminar Categoria'"
+    [mensaje]="'Estas a punto de eliminar &quot;' + elemento.nombre + '&quot;. Esta accion no se puede deshacer.'"
+    [eliminando]="eliminando()"
+    (cerrar)="cerrarModalEliminar()"
+    (confirmar)="confirmarEliminacion()"
+  />
+}

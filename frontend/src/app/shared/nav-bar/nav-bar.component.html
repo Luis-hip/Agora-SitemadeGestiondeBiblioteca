@@ -1,0 +1,77 @@
+<nav class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-stone-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <div class="flex items-center gap-8">
+        <a routerLink="/" class="flex items-center gap-2 text-amber-700 hover:text-amber-800 transition-colors">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="w-8 h-8"
+          >
+            <path d="M12 7v14" />
+            <path
+              d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"
+            />
+          </svg>
+          <span class="font-semibold text-xl tracking-tight text-stone-900">Agora</span>
+        </a>
+        <div class="flex space-x-6">
+          <a
+            routerLink="/"
+            routerLinkActive="text-amber-700 border-b-2 border-amber-700"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="text-sm font-medium transition-colors text-stone-600 hover:text-amber-700"
+          >
+            Inicio
+          </a>
+          <a
+            routerLink="/catalogo"
+            routerLinkActive="text-amber-700 border-b-2 border-amber-700"
+            class="text-sm font-medium transition-colors text-stone-600 hover:text-amber-700"
+          >
+            Catalogo
+          </a>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        @if (authService.estaAutenticado()) {
+          <app-notification-bell />
+          <img [src]="urlAvatarActor()" [alt]="authService.actor()?.nombre" class="w-8 h-8 rounded-full shadow-sm" />
+          <span class="text-sm text-stone-500 hidden sm:inline">{{ authService.actor()?.nombre }}</span>
+          <a
+            [routerLink]="authService.actor()?.tipoActor === 'USUARIO' ? '/perfil' : '/admin'"
+            routerLinkActive="text-amber-700"
+            class="text-sm font-bold text-stone-700 hover:text-amber-700 transition-colors"
+          >
+            {{ authService.actor()?.tipoActor === 'USUARIO' ? 'Mi Perfil' : 'Panel' }}
+          </a>
+          <button
+            type="button"
+            (click)="cerrarSesion()"
+            class="text-sm font-bold text-stone-600 hover:text-red-600 transition-colors"
+          >
+            Cerrar Sesion
+          </button>
+        } @else {
+          <a routerLink="/login" class="text-sm font-medium text-stone-600 hover:text-stone-900 transition-colors">
+            Iniciar Sesion
+          </a>
+          <a
+            routerLink="/registro"
+            class="bg-stone-900 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-stone-800 transition-colors"
+          >
+            Registro
+          </a>
+        }
+      </div>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,178 @@
+<div>
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold text-stone-900 tracking-tight">Panel de Control</h1>
+    <p class="text-stone-500 mt-1">Resumen operativo de la biblioteca.</p>
+  </header>
+
+  @if (error()) {
+    <div class="mb-6 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium">
+      {{ error() }}
+    </div>
+  }
+
+  @if (cargando()) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+      @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+        <div class="h-28 bg-white border border-stone-100 rounded-2xl animate-pulse"></div>
+      }
+    </div>
+  } @else if (dashboard(); as d) {
+    @if (vistaDetalle() === 'resumen') {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+        @for (tarjeta of tarjetas; track tarjeta.id) {
+          <button
+            type="button"
+            (click)="verDetalle(tarjeta.id)"
+            class="text-left bg-white border border-stone-100 rounded-2xl shadow-sm hover:shadow-md hover:border-amber-200 transition-all p-5"
+          >
+            <span
+              class="inline-flex items-center px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider mb-3"
+              [class]="tarjeta.color"
+            >
+              {{ tarjeta.etiqueta }}
+            </span>
+            <p class="text-3xl font-bold text-stone-900">{{ valorTarjeta(tarjeta.id) }}</p>
+            <p class="text-xs text-stone-400 font-bold uppercase tracking-wider mt-2">Ver todo &rarr;</p>
+          </button>
+        }
+      </div>
+
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-stone-100">
+          <h2 class="text-lg font-bold text-stone-900">Actividad Reciente</h2>
+        </div>
+        @if (d.actividad_reciente.length === 0) {
+          <p class="p-6 text-stone-400 text-sm">Aun no hay actividad registrada.</p>
+        } @else {
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-stone-50 text-stone-500 text-xs uppercase tracking-wider border-b border-stone-100">
+                <th class="px-6 py-4 font-medium">Libro</th>
+                <th class="px-6 py-4 font-medium">Usuario</th>
+                <th class="px-6 py-4 font-medium">Vencimiento</th>
+                <th class="px-6 py-4 font-medium text-right">Estado</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-stone-100 text-sm">
+              @for (item of d.actividad_reciente; track item.id) {
+                <tr>
+                  <td class="px-6 py-4 font-bold text-stone-900">{{ item.libro.titulo }}</td>
+                  <td class="px-6 py-4 text-stone-600">{{ item.usuario.nombre }}</td>
+                  <td class="px-6 py-4 text-stone-600">{{ item.fecha_dev_esperada }}</td>
+                  <td class="px-6 py-4 text-right">
+                    <span
+                      class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                      [class]="clasesBadge(item.estado)"
+                    >
+                      {{ item.estado }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    } @else {
+      <div class="mb-5">
+        <button
+          type="button"
+          (click)="volverAlResumen()"
+          class="text-sm font-bold text-stone-500 hover:text-amber-700 transition-colors"
+        >
+          &larr; Volver al resumen
+        </button>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        @if (cargandoDetalle()) {
+          <div class="p-6 space-y-3">
+            @for (placeholder of [1, 2, 3]; track placeholder) {
+              <div class="h-10 bg-stone-100 rounded-lg animate-pulse"></div>
+            }
+          </div>
+        } @else if (vistaDetalle() === 'activos' || vistaDetalle() === 'vencimientos') {
+          @if (itemsPrestamo().length === 0) {
+            <p class="p-6 text-stone-400 text-sm">No hay registros para esta metrica.</p>
+          } @else {
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-stone-50 text-stone-500 text-xs uppercase tracking-wider border-b border-stone-100">
+                  <th class="px-6 py-4 font-medium">Libro</th>
+                  <th class="px-6 py-4 font-medium">Usuario</th>
+                  <th class="px-6 py-4 font-medium">Vencimiento</th>
+                  <th class="px-6 py-4 font-medium text-right">Estado</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-stone-100 text-sm">
+                @for (item of itemsPrestamo(); track item.id) {
+                  <tr>
+                    <td class="px-6 py-4 font-bold text-stone-900">{{ item.libro.titulo }}</td>
+                    <td class="px-6 py-4 text-stone-600">{{ item.usuario.nombre }}</td>
+                    <td class="px-6 py-4 text-stone-600">{{ item.fecha_dev_esperada }}</td>
+                    <td class="px-6 py-4 text-right">
+                      <span
+                        class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                        [class]="clasesBadge(item.estado)"
+                      >
+                        {{ item.estado }}
+                      </span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        } @else if (vistaDetalle() === 'devoluciones') {
+          @if (itemsDevolucion().length === 0) {
+            <p class="p-6 text-stone-400 text-sm">No hay devoluciones registradas hoy.</p>
+          } @else {
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-stone-50 text-stone-500 text-xs uppercase tracking-wider border-b border-stone-100">
+                  <th class="px-6 py-4 font-medium">Libro</th>
+                  <th class="px-6 py-4 font-medium">Usuario</th>
+                  <th class="px-6 py-4 font-medium">Condicion</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-stone-100 text-sm">
+                @for (item of itemsDevolucion(); track item.id) {
+                  <tr>
+                    <td class="px-6 py-4 font-bold text-stone-900">{{ item.prestamo.libro.titulo }}</td>
+                    <td class="px-6 py-4 text-stone-600">{{ item.prestamo.usuario.nombre }}</td>
+                    <td class="px-6 py-4 text-stone-600">{{ item.condicion }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        } @else if (vistaDetalle() === 'multas') {
+          @if (itemsMulta().length === 0) {
+            <p class="p-6 text-stone-400 text-sm">No hay multas pendientes.</p>
+          } @else {
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-stone-50 text-stone-500 text-xs uppercase tracking-wider border-b border-stone-100">
+                  <th class="px-6 py-4 font-medium">Libro</th>
+                  <th class="px-6 py-4 font-medium">Usuario</th>
+                  <th class="px-6 py-4 font-medium">Dias de atraso</th>
+                  <th class="px-6 py-4 font-medium text-right">Monto</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-stone-100 text-sm">
+                @for (item of itemsMulta(); track item.id) {
+                  <tr>
+                    <td class="px-6 py-4 font-bold text-stone-900">{{ item.prestamo.libro.titulo }}</td>
+                    <td class="px-6 py-4 text-stone-600">{{ item.prestamo.usuario.nombre }}</td>
+                    <td class="px-6 py-4 text-stone-600">{{ item.dias_atraso }}</td>
+                    <td class="px-6 py-4 text-right font-bold text-red-600">${{ item.monto }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        }
+      </div>
+    }
+  }
+</div>
