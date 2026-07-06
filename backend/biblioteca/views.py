@@ -1,3 +1,4 @@
+from django.db.models import ProtectedError
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -5,10 +6,14 @@ from rest_framework.views import APIView
 
 from .api_response import respuesta_estandar
 from .exceptions import RecursoNoEncontradoError, ReglaDeNegocioError
-from .models import Bibliotecario, Usuario
+from .models import Bibliotecario
+from .permissions import EsBibliotecario, EsUsuario
 from .serializers import (
+    AnularMultaRequestSerializer,
+    AutorSerializer,
     CalculoMultaRequestSerializer,
     CategoriaSerializer,
+    LibroEscrituraSerializer,
     LibroSerializer,
     LoginSerializer,
     MultaSerializer,
@@ -89,10 +94,18 @@ class LoginView(APIView):
         )
 
 
-class CatalogoLibroViewSet(viewsets.ReadOnlyModelViewSet):
+class CatalogoLibroViewSet(viewsets.ModelViewSet):
     serializer_class = LibroSerializer
-    authentication_classes = []
-    permission_classes = [AllowAny]
+
+    def get_serializer_class(self):
+        if self.action in ('create', 'update', 'partial_update'):
+            return LibroEscrituraSerializer
+        return LibroSerializer
+
+    def get_permissions(self):
+        if self.action in ('list', 'retrieve'):
+            return [AllowAny()]
+        return [IsAuthenticated(), EsBibliotecario()]
 
     def get_queryset(self):
         return catalogo_service.listar_libros(
@@ -100,14 +113,53 @@ class CatalogoLibroViewSet(viewsets.ReadOnlyModelViewSet):
             disponible=self.request.query_params.get('disponible'),
         )
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        try:
+            instance.delete()
+        except ProtectedError:
+            return respuesta_estandar(
+                False, 422,
+                mensaje='No se puede eliminar: el libro tiene prestamos asociados.',
+                detalle='LIBRO_CON_PRESTAMOS',
+            )
+        return respuesta_estandar(True, 200, mensaje='Libro eliminado correctamente.')
 
-class CatalogoCategoriaViewSet(viewsets.ReadOnlyModelViewSet):
+
+class CatalogoCategoriaViewSet(viewsets.ModelViewSet):
     serializer_class = CategoriaSerializer
-    authentication_classes = []
-    permission_classes = [AllowAny]
+
+    def get_permissions(self):
+        if self.action in ('list', 'retrieve'):
+            return [AllowAny()]
+        return [IsAuthenticated(), EsBibliotecario()]
 
     def get_queryset(self):
         return catalogo_service.listar_categorias()
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        try:
+            instance.delete()
+        except ProtectedError:
+            return respuesta_estandar(
+                False, 422,
+                mensaje='No se puede eliminar: existen libros asociados a esta categoria.',
+                detalle='CATEGORIA_CON_LIBROS',
+            )
+        return respuesta_estandar(True, 200, mensaje='Categoria eliminada correctamente.')
+
+
+class CatalogoAutorViewSet(viewsets.ModelViewSet):
+    serializer_class = AutorSerializer
+
+    def get_permissions(self):
+        if self.action in ('list', 'retrieve'):
+            return [AllowAny()]
+        return [IsAuthenticated(), EsBibliotecario()]
+
+    def get_queryset(self):
+        return catalogo_service.listar_autores()
 
 
 class PrestamoController(APIView):
@@ -150,15 +202,9 @@ class PrestamoController(APIView):
 
 
 class PerfilView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, EsUsuario]
 
     def get(self, request):
-        if not isinstance(request.user, Usuario):
-            return respuesta_estandar(
-                False, 403,
-                mensaje='El perfil solo esta disponible para usuarios (estudiantes/profesores).',
-            )
-
         perfil = perfil_service.obtener_perfil(request.user)
 
         return respuesta_estandar(
@@ -175,7 +221,7 @@ class PerfilView(APIView):
 
 
 class MultaController(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, EsBibliotecario]
 
     def post(self, request):
         serializer = CalculoMultaRequestSerializer(data=request.data)
@@ -183,12 +229,6 @@ class MultaController(APIView):
             serializer.is_valid(raise_exception=True)
         except ValidationError as exc:
             return respuesta_estandar(False, 400, mensaje='Datos invalidos.', detalle=exc.detail)
-
-        if not isinstance(request.user, Bibliotecario):
-            return respuesta_estandar(
-                False, 403,
-                mensaje='Solo un bibliotecario puede registrar el calculo de una multa.',
-            )
 
         try:
             multa = MultaService().calcular_y_registrar(
@@ -206,15 +246,9 @@ class MultaController(APIView):
 
 
 class MultaPagoController(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, EsUsuario]
 
     def post(self, request, multa_id):
-        if not isinstance(request.user, Usuario):
-            return respuesta_estandar(
-                False, 403,
-                mensaje='Solo un usuario puede pagar sus propias multas.',
-            )
-
         try:
             multa = MultaService().pagar(multa_id, request.user.id)
         except RecursoNoEncontradoError as exc:
@@ -223,3 +257,25 @@ class MultaPagoController(APIView):
             return respuesta_estandar(False, exc.status_http, mensaje=exc.mensaje, detalle=exc.codigo)
 
         return respuesta_estandar(True, 200, datos=MultaSerializer(multa).data, mensaje='Multa pagada exitosamente')
+
+
+class MultaAnularController(APIView):
+    permission_classes = [IsAuthenticated, EsBibliotecario]
+
+    def post(self, request, multa_id):
+        serializer = AnularMultaRequestSerializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError as exc:
+            return respuesta_estandar(False, 400, mensaje='Datos invalidos.', detalle=exc.detail)
+
+        try:
+            multa = MultaService().anular_multa(
+                multa_id, serializer.validated_data['justificacion'], request.user,
+            )
+        except RecursoNoEncontradoError as exc:
+            return respuesta_estandar(False, exc.status_http, mensaje=exc.mensaje, detalle=exc.codigo)
+        except ReglaDeNegocioError as exc:
+            return respuesta_estandar(False, exc.status_http, mensaje=exc.mensaje, detalle=exc.codigo)
+
+        return respuesta_estandar(True, 200, datos=MultaSerializer(multa).data, mensaje='Multa anulada exitosamente')

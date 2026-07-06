@@ -3,7 +3,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from ..exceptions import ReglaDeNegocioError, RecursoNoEncontradoError
-from ..models import Multa, Usuario
+from ..models import Bibliotecario, Multa, Usuario
 from ..repositories import multa_repository, prestamo_repository, usuario_repository
 
 
@@ -57,6 +57,29 @@ class MultaService:
         # RN-03: el bloqueo se levanta automaticamente solo si no quedan otras multas pendientes
         if multa_repository.contar_pendientes_por_usuario(usuario_id) == 0:
             usuario = usuario_repository.buscar_por_id_con_bloqueo(usuario_id)
+            usuario.estado = Usuario.Estado.ACTIVO
+            usuario_repository.actualizar_estado(usuario)
+
+        return multa
+
+    @transaction.atomic
+    def anular_multa(self, multa_id, justificacion, usuario_ejecutor):
+        if not isinstance(usuario_ejecutor, Bibliotecario):
+            raise ReglaDeNegocioError('ROL_NO_AUTORIZADO', 'Solo un bibliotecario puede anular una multa.')
+
+        multa = multa_repository.buscar_por_id_con_bloqueo(multa_id)
+        if multa is None:
+            raise RecursoNoEncontradoError('Multa no encontrada')
+        if multa.estado != Multa.Estado.PENDIENTE:
+            raise ReglaDeNegocioError('MULTA_NO_PENDIENTE', 'La multa no se encuentra pendiente de pago')
+
+        multa.estado = Multa.Estado.ANULADA
+        multa.justificacion_anulacion = justificacion
+        multa_repository.marcar_anulada(multa)
+
+        # RN-03: el bloqueo se levanta automaticamente solo si no quedan otras multas pendientes
+        if multa_repository.contar_pendientes_por_usuario(multa.usuario_id) == 0:
+            usuario = usuario_repository.buscar_por_id_con_bloqueo(multa.usuario_id)
             usuario.estado = Usuario.Estado.ACTIVO
             usuario_repository.actualizar_estado(usuario)
 

@@ -30,3 +30,7 @@ def buscar_por_id_con_bloqueo(usuario_id):
 
 def actualizar_estado(usuario):
     usuario.save(update_fields=['estado', 'updated_at'])
+
+
+def listar_todos():
+    return Usuario.objects.all().order_by('nombre')

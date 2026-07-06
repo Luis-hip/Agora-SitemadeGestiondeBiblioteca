@@ -260,7 +260,7 @@
   @if (multaSeleccionada(); as multa) {
     <app-multa-detalle-modal
       [multa]="multa"
-      [pagando]="pagando()"
+      [procesando]="pagando()"
       (cerrar)="cerrarMulta()"
       (pagarAhora)="confirmarPago()"
     />

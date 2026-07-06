@@ -30,7 +30,7 @@ export class LoginPageComponent {
     try {
       const actor = await this.authService.login(this.identificador(), this.password());
       this.toast.exito('Inicio de sesion exitoso.');
-      this.router.navigate([actor.tipoActor === 'USUARIO' ? '/perfil' : '/catalogo']);
+      this.router.navigate([actor.tipoActor === 'USUARIO' ? '/perfil' : '/admin/dashboard']);
     } catch (err) {
       const error = err as HttpErrorResponse;
       this.errorInline.set(error.error?.mensaje ?? 'Correo/usuario o contrasena incorrectos.');

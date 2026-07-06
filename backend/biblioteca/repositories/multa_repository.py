@@ -30,8 +30,16 @@ def buscar_por_id_y_usuario_con_bloqueo(multa_id, usuario_id):
     return Multa.objects.select_for_update().filter(pk=multa_id, usuario_id=usuario_id).first()
 
 
+def buscar_por_id_con_bloqueo(multa_id):
+    return Multa.objects.select_for_update().filter(pk=multa_id).first()
+
+
 def marcar_pagada(multa):
     multa.save(update_fields=['estado', 'fecha_pago', 'updated_at'])
+
+
+def marcar_anulada(multa):
+    multa.save(update_fields=['estado', 'justificacion_anulacion', 'updated_at'])
 
 
 def listar_por_usuario_y_estado(usuario_id, estado):

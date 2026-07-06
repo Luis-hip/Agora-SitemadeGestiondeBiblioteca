@@ -10,6 +10,10 @@
           <a routerLink="/perfil" class="text-sm font-medium text-stone-600 hover:text-amber-700 transition-colors">
             Mi Perfil
           </a>
+        } @else if (authService.actor()?.tipoActor === 'BIBLIOTECARIO') {
+          <a routerLink="/admin" class="text-sm font-medium text-stone-600 hover:text-amber-700 transition-colors">
+            Panel Admin
+          </a>
         }
       </div>
       <div class="flex items-center gap-4">

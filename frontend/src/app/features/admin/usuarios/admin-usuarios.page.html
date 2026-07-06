@@ -1,0 +1,55 @@
+<div>
+  <header class="mb-6">
+    <h1 class="text-3xl font-bold text-stone-900 tracking-tight">Usuarios</h1>
+    <p class="text-stone-500 mt-1">Estudiantes y profesores registrados en la biblioteca.</p>
+  </header>
+
+  <div class="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+    @if (cargando()) {
+      <div class="p-6 space-y-3">
+        @for (placeholder of [1, 2, 3]; track placeholder) {
+          <div class="h-10 bg-stone-100 rounded-lg animate-pulse"></div>
+        }
+      </div>
+    } @else {
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-stone-50 text-stone-500 text-xs uppercase tracking-wider border-b border-stone-100">
+            <th class="px-6 py-4 font-medium">Usuario</th>
+            <th class="px-6 py-4 font-medium">Matricula</th>
+            <th class="px-6 py-4 font-medium">Tipo</th>
+            <th class="px-6 py-4 font-medium text-right">Estado</th>
+            <th class="px-6 py-4 font-medium text-center w-16"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-stone-100 text-sm">
+          @for (usuario of usuarios(); track usuario.id) {
+            <tr (click)="verDetalle(usuario)" class="hover:bg-stone-50 transition-colors cursor-pointer">
+              <td class="px-6 py-4">
+                <p class="font-bold text-stone-900">{{ usuario.nombre }}</p>
+                <p class="text-stone-500 text-xs mt-0.5">{{ usuario.email }}</p>
+              </td>
+              <td class="px-6 py-4 text-stone-500 font-mono text-xs">{{ usuario.matricula }}</td>
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-stone-100 text-stone-600">
+                  {{ usuario.tipo_usuario }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <span
+                  class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                  [class]="usuario.estado === 'ACTIVO' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50' : 'bg-red-50 text-red-700 border border-red-200/50'"
+                >
+                  {{ usuario.estado }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-center" (click)="$event.stopPropagation()">
+                <app-three-dot-menu [acciones]="acciones" (accionSeleccionada)="alSeleccionarAccion(usuario)" />
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

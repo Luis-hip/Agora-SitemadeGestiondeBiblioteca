@@ -1,4 +1,7 @@
+import { Multa } from '../../../core/models/multa.model';
 import { Prestamo } from '../../catalogo/models/catalogo.model';
+
+export type { Multa };
 
 export interface UsuarioPerfil {
   id: number;
@@ -8,16 +11,6 @@ export interface UsuarioPerfil {
   telefono: string;
   estado: 'ACTIVO' | 'SUSPENDIDO';
   tipo_usuario: 'ESTUDIANTE' | 'PROFESOR';
-}
-
-export interface Multa {
-  id: number;
-  prestamo: Prestamo;
-  monto: string;
-  dias_atraso: number;
-  estado: 'PENDIENTE' | 'PAGADA' | 'ANULADA';
-  fecha_generacion: string;
-  fecha_pago: string | null;
 }
 
 export interface Perfil {

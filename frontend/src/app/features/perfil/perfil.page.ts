@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, QueryList, ViewChildren, computed, inject, signal } from '@angular/core';
 
 import { ToastService } from '../../core/services/toast.service';
-import { MultaDetalleModalComponent } from './multa-detalle-modal.component';
+import { MultaDetalleModalComponent } from '../../shared/multa-detalle-modal/multa-detalle-modal.component';
 import { Multa, Perfil } from './models/perfil.model';
 import { PerfilService } from './services/perfil.service';
 

@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
 import { API_BASE_URL } from '../../../core/api-base-url';
-import { Categoria, FiltrosCatalogo, Libro } from '../models/catalogo.model';
+import { Autor, Categoria, FiltrosCatalogo, Libro } from '../models/catalogo.model';
 
 @Injectable({ providedIn: 'root' })
 export class CatalogoService {
@@ -22,5 +22,9 @@ export class CatalogoService {
 
   async listarCategorias(): Promise<Categoria[]> {
     return firstValueFrom(this.http.get<Categoria[]>(`${API_BASE_URL}/catalogo/categorias/`));
+  }
+
+  async listarAutores(): Promise<Autor[]> {
+    return firstValueFrom(this.http.get<Autor[]>(`${API_BASE_URL}/catalogo/autores/`));
   }
 }

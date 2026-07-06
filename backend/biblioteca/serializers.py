@@ -2,7 +2,17 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.contrib.auth.password_validation import validate_password as validar_password_django
 from rest_framework import serializers
 
-from .models import Autor, Categoria, Libro, Multa, Prestamo, Usuario, matricula_validator, telefono_validator
+from .models import (
+    Autor,
+    Categoria,
+    Devolucion,
+    Libro,
+    Multa,
+    Prestamo,
+    Usuario,
+    matricula_validator,
+    telefono_validator,
+)
 from .repositories import usuario_repository
 
 
@@ -73,6 +83,12 @@ class PrestamoSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
+class LibroEscrituraSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Libro
+        fields = ['id', 'titulo', 'isbn', 'fecha_publicacion', 'disponible', 'categoria', 'autores']
+
+
 class PrestamoRequestSerializer(serializers.Serializer):
     libro_id = serializers.IntegerField()
     usuario_id = serializers.IntegerField(required=False)
@@ -90,10 +106,41 @@ class MultaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Multa
-        fields = ['id', 'prestamo', 'monto', 'dias_atraso', 'estado', 'fecha_generacion', 'fecha_pago']
+        fields = [
+            'id', 'prestamo', 'monto', 'dias_atraso', 'estado',
+            'fecha_generacion', 'fecha_pago', 'justificacion_anulacion',
+        ]
         read_only_fields = fields
 
 
 class CalculoMultaRequestSerializer(serializers.Serializer):
     prestamo_id = serializers.IntegerField()
     fecha_devolucion_real = serializers.DateField()
+
+
+class AnularMultaRequestSerializer(serializers.Serializer):
+    justificacion = serializers.CharField(max_length=1000, allow_blank=False)
+
+
+class UsuarioResumenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Usuario
+        fields = ['id', 'nombre', 'email']
+        read_only_fields = fields
+
+
+class AdminPrestamoSerializer(PrestamoSerializer):
+    usuario = UsuarioResumenSerializer(read_only=True)
+
+
+class AdminMultaSerializer(MultaSerializer):
+    prestamo = AdminPrestamoSerializer(read_only=True)
+
+
+class DevolucionSerializer(serializers.ModelSerializer):
+    prestamo = AdminPrestamoSerializer(read_only=True)
+
+    class Meta:
+        model = Devolucion
+        fields = ['id', 'prestamo', 'fecha_devolucion', 'condicion']
+        read_only_fields = fields

@@ -1,4 +1,4 @@
-from ..repositories import categoria_repository, libro_repository
+from ..repositories import autor_repository, categoria_repository, libro_repository
 
 VALORES_VERDADEROS = {'true', '1', 'si', 'yes'}
 VALORES_FALSOS = {'false', '0', 'no'}
@@ -21,3 +21,7 @@ def listar_libros(categoria_id=None, disponible=None):
 
 def listar_categorias():
     return categoria_repository.listar()
+
+
+def listar_autores():
+    return autor_repository.listar()

@@ -1,0 +1,150 @@
+<div>
+  <button
+    type="button"
+    (click)="volver()"
+    class="text-sm font-bold text-stone-500 hover:text-amber-700 transition-colors mb-5"
+  >
+    &larr; Volver a Usuarios
+  </button>
+
+  @if (error()) {
+    <div class="mb-6 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium">
+      {{ error() }}
+    </div>
+  }
+
+  @if (cargando()) {
+    <div class="space-y-4">
+      <div class="h-16 w-full bg-white border border-stone-100 rounded-2xl animate-pulse"></div>
+      <div class="h-40 w-full bg-white border border-stone-100 rounded-2xl animate-pulse"></div>
+    </div>
+  } @else if (detalle(); as d) {
+    <header class="mb-8 bg-white rounded-2xl border border-stone-100 shadow-sm p-6 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-stone-900">{{ d.usuario.nombre }}</h1>
+        <p class="text-stone-500 text-sm mt-1">{{ d.usuario.email }} &middot; {{ d.usuario.matricula }}</p>
+      </div>
+      <span
+        class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider"
+        [class]="d.usuario.estado === 'ACTIVO' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50' : 'bg-red-50 text-red-700 border border-red-200/50'"
+      >
+        {{ d.usuario.estado }}
+      </span>
+    </header>
+
+    <div class="space-y-8">
+      <section class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-stone-100">
+          <h2 class="text-lg font-bold text-stone-900">Prestamos Activos</h2>
+        </div>
+        @if (d.prestamos_activos.length === 0) {
+          <p class="p-6 text-stone-400 text-sm">No tiene prestamos activos.</p>
+        } @else {
+          <ul class="divide-y divide-stone-100">
+            @for (prestamo of d.prestamos_activos; track prestamo.id) {
+              <li class="px-6 py-3 flex items-center justify-between text-sm">
+                <span class="font-bold text-stone-900">{{ prestamo.libro.titulo }}</span>
+                <span class="text-stone-500">Vence: {{ prestamo.fecha_dev_esperada }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-stone-100">
+          <h2 class="text-lg font-bold text-stone-900">Multas Pendientes</h2>
+        </div>
+        @if (d.multas_pendientes.length === 0) {
+          <p class="p-6 text-stone-400 text-sm">No tiene multas pendientes.</p>
+        } @else {
+          <ul class="divide-y divide-stone-100">
+            @for (multa of d.multas_pendientes; track multa.id) {
+              <li>
+                <button
+                  type="button"
+                  (click)="abrirMulta(multa)"
+                  class="w-full text-left px-6 py-4 flex items-center justify-between gap-4 hover:bg-red-50/50 transition-colors"
+                >
+                  <div>
+                    <p class="font-bold text-stone-900">{{ multa.prestamo.libro.titulo }}</p>
+                    <p class="text-xs text-red-600 font-bold uppercase tracking-wider mt-0.5">
+                      {{ multa.dias_atraso }} dias de atraso
+                    </p>
+                  </div>
+                  <span class="font-bold text-red-600 text-lg">${{ multa.monto }}</span>
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-stone-100">
+          <h2 class="text-lg font-bold text-stone-900">Historial de Prestamos</h2>
+        </div>
+        @if (d.historial_prestamos.length === 0) {
+          <p class="p-6 text-stone-400 text-sm">Sin historial de prestamos.</p>
+        } @else {
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-stone-50 text-stone-500 text-xs uppercase tracking-wider border-b border-stone-100">
+                <th class="px-6 py-4 font-medium">Libro</th>
+                <th class="px-6 py-4 font-medium">Fecha prestamo</th>
+                <th class="px-6 py-4 font-medium">Vencimiento</th>
+                <th class="px-6 py-4 font-medium text-right">Estado</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-stone-100 text-sm">
+              @for (prestamo of d.historial_prestamos; track prestamo.id) {
+                <tr>
+                  <td class="px-6 py-4 font-bold text-stone-900">{{ prestamo.libro.titulo }}</td>
+                  <td class="px-6 py-4 text-stone-600">{{ prestamo.fecha_inicio }}</td>
+                  <td class="px-6 py-4 text-stone-600">{{ prestamo.fecha_dev_esperada }}</td>
+                  <td class="px-6 py-4 text-right">
+                    <span
+                      class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                      [class]="clasesBadge(prestamo.estado)"
+                    >
+                      {{ prestamo.estado }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </section>
+
+      <section class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-stone-100">
+          <h2 class="text-lg font-bold text-stone-900">Multas Pagadas</h2>
+        </div>
+        @if (d.multas_pagadas.length === 0) {
+          <p class="p-6 text-stone-400 text-sm">Sin multas pagadas.</p>
+        } @else {
+          <ul class="divide-y divide-stone-100">
+            @for (multa of d.multas_pagadas; track multa.id) {
+              <li class="px-6 py-3 flex items-center justify-between text-sm">
+                <span class="font-bold text-stone-900">{{ multa.prestamo.libro.titulo }}</span>
+                <span class="text-stone-500">Pagada el {{ multa.fecha_pago }}</span>
+                <span class="font-bold text-stone-700">${{ multa.monto }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+  }
+</div>
+
+@if (multaSeleccionada(); as multa) {
+  <app-multa-detalle-modal
+    [multa]="multa"
+    [procesando]="anulando()"
+    [modoAdmin]="true"
+    (cerrar)="cerrarMulta()"
+    (anularMulta)="confirmarAnulacion($event)"
+  />
+}
