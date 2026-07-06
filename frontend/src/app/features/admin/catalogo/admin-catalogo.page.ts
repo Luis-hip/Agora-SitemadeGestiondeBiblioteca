@@ -100,6 +100,7 @@ export class AdminCatalogoPageComponent {
         isbn: salida.isbn,
         fecha_publicacion: salida.fecha_publicacion,
         disponible: salida.disponible,
+        stock: salida.stock,
         categoria: salida.categoria,
         autores: [autorId],
       };

@@ -3,16 +3,18 @@ from datetime import timedelta
 from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from .api_response import respuesta_estandar
 from .exceptions import RecursoNoEncontradoError
-from .models import Devolucion, Multa, Prestamo, Usuario
+from .models import ConfiguracionBiblioteca, Devolucion, Multa, Prestamo, Usuario
 from .permissions import EsBibliotecario
 from .serializers import (
     AdminMultaSerializer,
     AdminPrestamoSerializer,
+    ConfiguracionBibliotecaSerializer,
     DevolucionSerializer,
     MultaSerializer,
     PrestamoSerializer,
@@ -123,4 +125,31 @@ class AdminUsuarioViewSet(viewsets.ReadOnlyModelViewSet):
 
         return respuesta_estandar(
             True, 200, datos=UsuarioSerializer(usuario).data, mensaje='Usuario suspendido correctamente.',
+        )
+
+
+class AdminConfiguracionView(APIView):
+    permission_classes = [IsAuthenticated, EsBibliotecario]
+
+    def get(self, request):
+        configuracion = ConfiguracionBiblioteca.cargar()
+        return respuesta_estandar(
+            True, 200,
+            datos=ConfiguracionBibliotecaSerializer(configuracion).data,
+            mensaje='Configuracion obtenida correctamente.',
+        )
+
+    def patch(self, request):
+        configuracion = ConfiguracionBiblioteca.cargar()
+        serializer = ConfiguracionBibliotecaSerializer(configuracion, data=request.data, partial=True)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError as exc:
+            return respuesta_estandar(False, 400, mensaje='Datos invalidos.', detalle=exc.detail)
+        serializer.save()
+
+        return respuesta_estandar(
+            True, 200,
+            datos=serializer.data,
+            mensaje='Configuracion actualizada correctamente.',
         )

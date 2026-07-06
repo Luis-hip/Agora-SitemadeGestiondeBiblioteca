@@ -51,6 +51,7 @@
             <th class="px-6 py-4 font-medium">Libro</th>
             <th class="px-6 py-4 font-medium">Categoria</th>
             <th class="px-6 py-4 font-medium">ISBN</th>
+            <th class="px-6 py-4 font-medium text-center">Stock</th>
             <th class="px-6 py-4 font-medium text-right">Estado</th>
             <th class="px-6 py-4 font-medium text-center w-16"></th>
           </tr>
@@ -73,6 +74,7 @@
               </td>
               <td class="px-6 py-4 text-stone-600">{{ libro.categoria.nombre }}</td>
               <td class="px-6 py-4 text-stone-500 font-mono text-xs">{{ libro.isbn }}</td>
+              <td class="px-6 py-4 text-center font-bold text-stone-700">{{ libro.stock }}</td>
               <td class="px-6 py-4 text-right">
                 <span
                   class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white"

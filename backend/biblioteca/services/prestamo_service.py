@@ -4,10 +4,9 @@ from django.db import transaction
 from django.utils import timezone
 
 from ..exceptions import ReglaDeNegocioError, RecursoNoEncontradoError
-from ..models import Usuario
+from ..models import ConfiguracionBiblioteca, Usuario
 from ..repositories import libro_repository, multa_repository, prestamo_repository, usuario_repository
 
-DIAS_PRESTAMO = 14
 LIMITE_PRESTAMOS_ACTIVOS = 3
 
 
@@ -37,7 +36,8 @@ class PrestamoService:
             raise ReglaDeNegocioError('LIBRO_NO_DISPONIBLE', 'El ejemplar no esta disponible para prestamo')
 
         # 5) Calculo de fecha limite y persistencia atomica (RN-02, RN-04)
-        fecha_dev_esperada = timezone.localdate() + timedelta(days=DIAS_PRESTAMO)
+        dias_prestamo = ConfiguracionBiblioteca.cargar().dias_maximos_prestamo
+        fecha_dev_esperada = timezone.localdate() + timedelta(days=dias_prestamo)
 
         nuevo_prestamo = prestamo_repository.crear(
             usuario=usuario,

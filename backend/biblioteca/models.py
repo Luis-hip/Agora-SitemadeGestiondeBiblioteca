@@ -177,6 +177,7 @@ class Libro(TimestampedModel):
     isbn = models.CharField(max_length=20, unique=True, validators=[validar_isbn])
     fecha_publicacion = models.DateField()
     disponible = models.BooleanField(default=True)
+    stock = models.PositiveIntegerField(default=1)
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT, related_name='libros')
     autores = models.ManyToManyField(Autor, related_name='libros')
 
@@ -281,3 +282,30 @@ class Multa(TimestampedModel):
 
     def __str__(self):
         return f'Multa #{self.pk} - {self.usuario} (${self.monto})'
+
+
+class ConfiguracionBiblioteca(models.Model):
+    tarifa_multa_diaria = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(0)])
+    dias_maximos_prestamo = models.PositiveIntegerField()
+
+    class Meta:
+        verbose_name = 'Configuracion de la Biblioteca'
+        verbose_name_plural = 'Configuracion de la Biblioteca'
+
+    def __str__(self):
+        return 'Configuracion de la Biblioteca'
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass
+
+    @classmethod
+    def cargar(cls):
+        instancia, _ = cls.objects.get_or_create(
+            pk=1,
+            defaults={'tarifa_multa_diaria': 5, 'dias_maximos_prestamo': 14},
+        )
+        return instancia

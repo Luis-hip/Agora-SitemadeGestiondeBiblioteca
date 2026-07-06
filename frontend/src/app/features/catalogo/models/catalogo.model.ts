@@ -16,6 +16,7 @@ export interface Libro {
   isbn: string;
   fecha_publicacion: string;
   disponible: boolean;
+  stock: number;
   categoria: Categoria;
   autores: Autor[];
 }

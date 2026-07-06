@@ -21,6 +21,7 @@ export class LibroFormModalComponent implements OnChanges {
   protected readonly fechaPublicacion = signal('');
   protected readonly categoriaId = signal<number | null>(null);
   protected readonly disponible = signal(true);
+  protected readonly stock = signal(1);
   protected readonly autorSeleccionadoId = signal<number | null>(null);
   protected readonly autorNuevoNombre = signal('');
 
@@ -30,6 +31,7 @@ export class LibroFormModalComponent implements OnChanges {
     this.fechaPublicacion.set(this.libro?.fecha_publicacion ?? '');
     this.categoriaId.set(this.libro?.categoria.id ?? this.categorias[0]?.id ?? null);
     this.disponible.set(this.libro?.disponible ?? true);
+    this.stock.set(this.libro?.stock ?? 1);
     this.autorSeleccionadoId.set(this.libro?.autores[0]?.id ?? this.autores[0]?.id ?? null);
     this.autorNuevoNombre.set('');
   }
@@ -49,6 +51,7 @@ export class LibroFormModalComponent implements OnChanges {
       isbn: this.isbn().trim(),
       fecha_publicacion: this.fechaPublicacion(),
       disponible: this.disponible(),
+      stock: this.stock(),
       categoria: this.categoriaId()!,
       autorSeleccionadoId: this.autorSeleccionadoId(),
       autorNuevoNombre: this.autorNuevoNombre(),

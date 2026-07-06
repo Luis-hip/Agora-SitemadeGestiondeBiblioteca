@@ -1,9 +1,8 @@
-from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 
 from ..exceptions import ReglaDeNegocioError, RecursoNoEncontradoError
-from ..models import Bibliotecario, Multa, Usuario
+from ..models import Bibliotecario, ConfiguracionBiblioteca, Multa, Usuario
 from ..repositories import multa_repository, prestamo_repository, usuario_repository
 
 
@@ -21,7 +20,8 @@ class MultaService:
             raise ReglaDeNegocioError('SIN_ATRASO', 'La devolucion se realizo dentro del plazo, no se genera multa')
 
         # 2) Monto no editable, derivado de formula (RN-05)
-        monto = round(settings.TARIFA_MULTA_DIA * dias_atraso, 2)
+        tarifa_diaria = ConfiguracionBiblioteca.cargar().tarifa_multa_diaria
+        monto = round(tarifa_diaria * dias_atraso, 2)
 
         # 3) Evitar duplicidad: actualizar si ya existe multa activa
         multa_existente = multa_repository.buscar_pendiente_por_prestamo(prestamo_id)

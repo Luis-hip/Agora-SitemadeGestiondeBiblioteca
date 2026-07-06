@@ -5,6 +5,7 @@ from rest_framework import serializers
 from .models import (
     Autor,
     Categoria,
+    ConfiguracionBiblioteca,
     Devolucion,
     Libro,
     Multa,
@@ -71,7 +72,7 @@ class LibroSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Libro
-        fields = ['id', 'titulo', 'isbn', 'fecha_publicacion', 'disponible', 'categoria', 'autores']
+        fields = ['id', 'titulo', 'isbn', 'fecha_publicacion', 'disponible', 'stock', 'categoria', 'autores']
 
 
 class PrestamoSerializer(serializers.ModelSerializer):
@@ -86,7 +87,7 @@ class PrestamoSerializer(serializers.ModelSerializer):
 class LibroEscrituraSerializer(serializers.ModelSerializer):
     class Meta:
         model = Libro
-        fields = ['id', 'titulo', 'isbn', 'fecha_publicacion', 'disponible', 'categoria', 'autores']
+        fields = ['id', 'titulo', 'isbn', 'fecha_publicacion', 'disponible', 'stock', 'categoria', 'autores']
 
 
 class PrestamoRequestSerializer(serializers.Serializer):
@@ -144,3 +145,9 @@ class DevolucionSerializer(serializers.ModelSerializer):
         model = Devolucion
         fields = ['id', 'prestamo', 'fecha_devolucion', 'condicion']
         read_only_fields = fields
+
+
+class ConfiguracionBibliotecaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConfiguracionBiblioteca
+        fields = ['tarifa_multa_diaria', 'dias_maximos_prestamo']

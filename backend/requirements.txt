@@ -4,3 +4,4 @@ djangorestframework==3.17.1
 djangorestframework-simplejwt==5.5.1
 python-decouple==3.8
 django-cors-headers==4.9.0
+Faker==40.28.1

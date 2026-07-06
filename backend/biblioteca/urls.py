@@ -14,6 +14,7 @@ from .views import (
     RegistroUsuarioView,
 )
 from .views_admin import (
+    AdminConfiguracionView,
     AdminDashboardView,
     AdminDevolucionViewSet,
     AdminMultaViewSet,
@@ -39,4 +40,5 @@ urlpatterns = [
     path('multas/<int:multa_id>/pagar/', MultaPagoController.as_view(), name='multas-pagar'),
     path('multas/<int:multa_id>/anular/', MultaAnularController.as_view(), name='multas-anular'),
     path('admin/dashboard/', AdminDashboardView.as_view(), name='admin-dashboard'),
+    path('admin/configuracion/', AdminConfiguracionView.as_view(), name='admin-configuracion'),
 ] + router.urls

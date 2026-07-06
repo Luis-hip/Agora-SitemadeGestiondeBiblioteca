@@ -57,6 +57,7 @@ export interface LibroPayload {
   isbn: string;
   fecha_publicacion: string;
   disponible: boolean;
+  stock: number;
   categoria: number;
   autores: number[];
 }
@@ -66,9 +67,20 @@ export interface LibroFormOutput {
   isbn: string;
   fecha_publicacion: string;
   disponible: boolean;
+  stock: number;
   categoria: number;
   autorSeleccionadoId: number | null;
   autorNuevoNombre: string;
+}
+
+export interface ConfiguracionBiblioteca {
+  tarifa_multa_diaria: string;
+  dias_maximos_prestamo: number;
+}
+
+export interface ConfiguracionBibliotecaPayload {
+  tarifa_multa_diaria: number;
+  dias_maximos_prestamo: number;
 }
 
 export type { Libro };
