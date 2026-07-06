@@ -1,0 +1,19 @@
+@if (!sinPortada()) {
+  <img
+    [src]="urlPortada"
+    [alt]="'Portada de ' + titulo"
+    (error)="alFallarCarga()"
+    (load)="alCargar($event)"
+    class="w-full h-full object-cover"
+  />
+} @else {
+  <div
+    class="w-full h-full flex items-center justify-center bg-gradient-to-br from-stone-100 to-stone-200 text-stone-300"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10">
+      <path
+        d="M4 4a2 2 0 012-2h10a2 2 0 012 2v16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0v16h10V4H6zm2 3h6v1.5H8V7zm0 3h6v1.5H8V10z"
+      />
+    </svg>
+  </div>
+}

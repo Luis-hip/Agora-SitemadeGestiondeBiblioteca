@@ -59,17 +59,24 @@
           @for (libro of libros(); track libro.id) {
             <tr class="hover:bg-stone-50/50 transition-colors">
               <td class="px-6 py-4">
-                <p class="font-bold text-stone-900">{{ libro.titulo }}</p>
-                <p class="text-stone-500 text-xs mt-0.5">
-                  {{ libro.autores.length ? libro.autores[0].nombre : 'Autor desconocido' }}
-                </p>
+                <div class="flex items-center gap-3">
+                  <div class="w-8 aspect-[2/3] shrink-0 rounded-md overflow-hidden bg-stone-200 shadow-sm">
+                    <app-book-cover [isbn]="libro.isbn" [titulo]="libro.titulo" />
+                  </div>
+                  <div class="min-w-0">
+                    <p class="font-bold text-stone-900 truncate">{{ libro.titulo }}</p>
+                    <p class="text-stone-500 text-xs mt-0.5 truncate">
+                      {{ libro.autores.length ? libro.autores[0].nombre : 'Autor desconocido' }}
+                    </p>
+                  </div>
+                </div>
               </td>
               <td class="px-6 py-4 text-stone-600">{{ libro.categoria.nombre }}</td>
               <td class="px-6 py-4 text-stone-500 font-mono text-xs">{{ libro.isbn }}</td>
               <td class="px-6 py-4 text-right">
                 <span
-                  class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
-                  [class]="libro.disponible ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-600'"
+                  class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white"
+                  [class]="libro.disponible ? 'bg-emerald-600' : 'bg-red-600'"
                 >
                   {{ libro.disponible ? 'Disponible' : 'Prestado' }}
                 </span>

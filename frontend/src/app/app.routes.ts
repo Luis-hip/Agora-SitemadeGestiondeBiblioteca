@@ -1,10 +1,18 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'catalogo', pathMatch: 'full' },
+  {
+    path: '',
+    pathMatch: 'full',
+    loadComponent: () => import('./features/landing/landing.page').then((m) => m.LandingPageComponent),
+  },
   {
     path: 'login',
     loadComponent: () => import('./features/auth/login.page').then((m) => m.LoginPageComponent),
+  },
+  {
+    path: 'registro',
+    loadComponent: () => import('./features/auth/registro.page').then((m) => m.RegistroPageComponent),
   },
   {
     path: 'catalogo',

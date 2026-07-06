@@ -26,8 +26,13 @@
           @for (usuario of usuarios(); track usuario.id) {
             <tr (click)="verDetalle(usuario)" class="hover:bg-stone-50 transition-colors cursor-pointer">
               <td class="px-6 py-4">
-                <p class="font-bold text-stone-900">{{ usuario.nombre }}</p>
-                <p class="text-stone-500 text-xs mt-0.5">{{ usuario.email }}</p>
+                <div class="flex items-center gap-3">
+                  <img [src]="urlAvatarUsuario(usuario.nombre)" [alt]="usuario.nombre" class="w-8 h-8 rounded-full shadow-sm shrink-0" />
+                  <div>
+                    <p class="font-bold text-stone-900">{{ usuario.nombre }}</p>
+                    <p class="text-stone-500 text-xs mt-0.5">{{ usuario.email }}</p>
+                  </div>
+                </div>
               </td>
               <td class="px-6 py-4 text-stone-500 font-mono text-xs">{{ usuario.matricula }}</td>
               <td class="px-6 py-4">

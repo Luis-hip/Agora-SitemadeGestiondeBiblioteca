@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { Multa } from '../../../core/models/multa.model';
 import { ToastService } from '../../../core/services/toast.service';
+import { urlAvatar } from '../../../shared/avatar.util';
 import { clasesBadgeEstado } from '../../../shared/estado-badge.util';
 import { MultaDetalleModalComponent } from '../../../shared/multa-detalle-modal/multa-detalle-modal.component';
 import { UsuarioDetalle } from '../models/admin.model';
@@ -34,6 +35,10 @@ export class AdminUsuarioDetallePageComponent {
 
   protected volver(): void {
     this.router.navigate(['/admin/usuarios']);
+  }
+
+  protected urlAvatarUsuario(nombre: string): string {
+    return urlAvatar(nombre);
   }
 
   protected clasesBadge(estado: string): string {

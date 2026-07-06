@@ -1,0 +1,109 @@
+<div class="min-h-screen bg-stone-50 flex items-center justify-center px-4 py-10">
+  <form
+    (submit)="alEnviarFormulario($event)"
+    class="w-full max-w-md bg-white rounded-3xl shadow-lg border border-stone-100 p-8"
+  >
+    <h1 class="text-2xl font-bold text-stone-900 mb-1">Crear cuenta</h1>
+    <p class="text-stone-500 text-sm mb-6">Registrate con tu matricula institucional para acceder al catalogo.</p>
+
+    @if (errorInline()) {
+      <div class="mb-4 px-3 py-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm font-medium">
+        {{ errorInline() }}
+      </div>
+    }
+
+    <div class="grid grid-cols-2 gap-4 mb-4">
+      <div>
+        <label class="block text-sm font-bold text-stone-700 mb-1.5">Matricula</label>
+        <input
+          type="text"
+          required
+          pattern="[0-9]{9}"
+          [value]="matricula()"
+          (input)="matricula.set($any($event.target).value)"
+          class="w-full px-4 py-2.5 bg-white border border-stone-200 rounded-xl text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/40 focus:border-amber-500"
+          placeholder="202345678"
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-stone-700 mb-1.5">Tipo</label>
+        <select
+          [value]="tipoUsuario()"
+          (change)="tipoUsuario.set($any($event.target).value)"
+          class="w-full px-4 py-2.5 bg-white border border-stone-200 rounded-xl text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/40 focus:border-amber-500 text-stone-700"
+        >
+          <option value="ESTUDIANTE">Estudiante</option>
+          <option value="PROFESOR">Profesor</option>
+        </select>
+      </div>
+    </div>
+
+    <label class="block text-sm font-bold text-stone-700 mb-1.5">Nombre completo</label>
+    <input
+      type="text"
+      required
+      [value]="nombre()"
+      (input)="nombre.set($any($event.target).value)"
+      class="w-full px-4 py-2.5 mb-4 bg-white border border-stone-200 rounded-xl text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/40 focus:border-amber-500"
+      placeholder="Camila Fernandez"
+    />
+
+    <label class="block text-sm font-bold text-stone-700 mb-1.5">Correo institucional</label>
+    <input
+      type="email"
+      required
+      [value]="email()"
+      (input)="email.set($any($event.target).value)"
+      class="w-full px-4 py-2.5 mb-4 bg-white border border-stone-200 rounded-xl text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/40 focus:border-amber-500"
+      placeholder="camila@agora.edu"
+    />
+
+    <label class="block text-sm font-bold text-stone-700 mb-1.5">Telefono</label>
+    <input
+      type="tel"
+      required
+      [value]="telefono()"
+      (input)="telefono.set($any($event.target).value)"
+      class="w-full px-4 py-2.5 mb-4 bg-white border border-stone-200 rounded-xl text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/40 focus:border-amber-500"
+      placeholder="222 123 4567"
+    />
+
+    <div class="grid grid-cols-2 gap-4 mb-6">
+      <div>
+        <label class="block text-sm font-bold text-stone-700 mb-1.5">Contrasena</label>
+        <input
+          type="password"
+          required
+          [value]="password()"
+          (input)="password.set($any($event.target).value)"
+          class="w-full px-4 py-2.5 bg-white border border-stone-200 rounded-xl text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/40 focus:border-amber-500"
+          placeholder="********"
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-stone-700 mb-1.5">Confirmar</label>
+        <input
+          type="password"
+          required
+          [value]="passwordConfirmacion()"
+          (input)="passwordConfirmacion.set($any($event.target).value)"
+          class="w-full px-4 py-2.5 bg-white border border-stone-200 rounded-xl text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/40 focus:border-amber-500"
+          placeholder="********"
+        />
+      </div>
+    </div>
+
+    <button
+      type="submit"
+      [disabled]="enviando()"
+      class="w-full bg-stone-900 hover:bg-stone-800 disabled:opacity-60 text-white py-3 rounded-xl font-bold transition-colors"
+    >
+      {{ enviando() ? 'Creando cuenta...' : 'Crear cuenta' }}
+    </button>
+
+    <p class="text-center text-sm text-stone-500 mt-5">
+      Ya tienes cuenta?
+      <a routerLink="/login" class="font-bold text-amber-700 hover:text-amber-800">Inicia sesion</a>
+    </p>
+  </form>
+</div>

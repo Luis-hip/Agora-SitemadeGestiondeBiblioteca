@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ToastService } from '../../../core/services/toast.service';
+import { urlAvatar } from '../../../shared/avatar.util';
 import { AccionMenu, ThreeDotMenuComponent } from '../../../shared/three-dot-menu/three-dot-menu.component';
 import { Usuario } from '../models/admin.model';
 import { AdminUsuariosService } from '../services/admin-usuarios.service';
@@ -29,6 +30,10 @@ export class AdminUsuariosPageComponent {
 
   protected verDetalle(usuario: Usuario): void {
     this.router.navigate(['/admin/usuarios', usuario.id]);
+  }
+
+  protected urlAvatarUsuario(nombre: string): string {
+    return urlAvatar(nombre);
   }
 
   protected async alSeleccionarAccion(usuario: Usuario): Promise<void> {

@@ -1,10 +1,15 @@
 <div class="min-h-screen bg-stone-50">
   <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
-    <header class="mb-8">
-      <h1 class="text-3xl font-bold text-stone-900 tracking-tight">Mi Perfil</h1>
+    <header class="mb-8 flex items-center gap-4">
       @if (perfil(); as p) {
-        <p class="text-stone-500 mt-1">{{ p.usuario.nombre }} &middot; {{ p.usuario.email }}</p>
+        <img [src]="urlAvatarUsuario(p.usuario.nombre)" [alt]="p.usuario.nombre" class="w-14 h-14 rounded-full shadow-sm shrink-0" />
       }
+      <div>
+        <h1 class="text-3xl font-bold text-stone-900 tracking-tight">Mi Perfil</h1>
+        @if (perfil(); as p) {
+          <p class="text-stone-500 mt-1">{{ p.usuario.nombre }} &middot; {{ p.usuario.email }}</p>
+        }
+      </div>
     </header>
 
     @if (error()) {

@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 
 import { ToastService } from '../../core/services/toast.service';
+import { BookCoverComponent } from '../../shared/book-cover/book-cover.component';
 import { FiltrosCatalogoModalComponent, FiltrosSeleccionados } from './filtros-catalogo-modal.component';
 import { LibroDetalleModalComponent } from './libro-detalle-modal.component';
 import { Categoria, Libro } from './models/catalogo.model';
@@ -10,7 +11,7 @@ import { PrestamoService } from './services/prestamo.service';
 
 @Component({
   selector: 'app-catalogo-page',
-  imports: [LibroDetalleModalComponent, FiltrosCatalogoModalComponent],
+  imports: [LibroDetalleModalComponent, FiltrosCatalogoModalComponent, BookCoverComponent],
   templateUrl: './catalogo.page.html',
 })
 export class CatalogoPageComponent {

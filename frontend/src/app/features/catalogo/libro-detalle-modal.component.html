@@ -9,12 +9,8 @@
   >
     <div class="px-6 py-5 border-b border-stone-100 flex items-center justify-between bg-stone-50/50">
       <span
-        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border"
-        [class]="
-          libro.disponible
-            ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
-            : 'bg-stone-200 text-stone-700 border-stone-300'
-        "
+        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white"
+        [class]="libro.disponible ? 'bg-emerald-600' : 'bg-red-600'"
       >
         {{ libro.disponible ? 'Disponible' : 'Prestado' }}
       </span>
@@ -30,9 +26,9 @@
 
     <div class="p-6 md:p-8 flex flex-col sm:flex-row gap-6">
       <div
-        class="w-28 h-40 sm:w-32 sm:h-48 shrink-0 rounded-lg overflow-hidden bg-stone-100 border border-stone-200 shadow-sm flex items-center justify-center mx-auto sm:mx-0"
+        class="w-28 sm:w-32 aspect-[2/3] shrink-0 rounded-xl overflow-hidden bg-stone-200 shadow-md mx-auto sm:mx-0"
       >
-        <span class="text-4xl text-stone-300">&#128214;</span>
+        <app-book-cover [isbn]="libro.isbn" [titulo]="libro.titulo" />
       </div>
 
       <div class="flex-1 min-w-0">

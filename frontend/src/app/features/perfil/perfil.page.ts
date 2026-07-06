@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, QueryList, ViewChildren, computed, inject, signal } from '@angular/core';
 
 import { ToastService } from '../../core/services/toast.service';
+import { urlAvatar } from '../../shared/avatar.util';
 import { MultaDetalleModalComponent } from '../../shared/multa-detalle-modal/multa-detalle-modal.component';
 import { Multa, Perfil } from './models/perfil.model';
 import { PerfilService } from './services/perfil.service';
@@ -44,6 +45,10 @@ export class PerfilPageComponent {
 
   constructor() {
     void this.cargarPerfil();
+  }
+
+  protected urlAvatarUsuario(nombre: string): string {
+    return urlAvatar(nombre);
   }
 
   protected seleccionarPestana(pestana: PestanaPrincipal): void {

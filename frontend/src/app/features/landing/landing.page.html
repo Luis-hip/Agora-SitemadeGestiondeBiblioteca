@@ -1,0 +1,163 @@
+<div class="flex flex-col bg-white">
+  <!-- Hero Section -->
+  <section class="relative w-full border-b border-stone-200">
+    <div class="absolute inset-0 bg-stone-50"></div>
+    <div
+      class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 flex flex-col lg:flex-row items-center gap-12"
+    >
+      <div class="lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-stone-900 tracking-tight font-serif mb-6 leading-tight">
+          El conocimiento <br />universitario a <br /><span class="text-amber-700 italic">tu alcance.</span>
+        </h1>
+        <p class="text-lg text-stone-600 mb-8 max-w-lg">
+          Agora te permite explorar, reservar y gestionar el catalogo completo de la biblioteca universitaria desde
+          cualquier lugar.
+        </p>
+        <div class="flex flex-col sm:flex-row flex-wrap gap-4 w-full sm:w-auto">
+          <a
+            routerLink="/catalogo"
+            class="px-8 py-3.5 bg-stone-900 text-white rounded-full font-medium flex items-center justify-center gap-2 hover:bg-stone-800 transition-colors"
+          >
+            Explorar Catalogo
+          </a>
+          <a
+            routerLink="/login"
+            class="px-8 py-3.5 bg-white border border-stone-300 text-stone-800 rounded-full font-medium flex items-center justify-center gap-2 hover:bg-stone-50 transition-colors"
+          >
+            Iniciar Sesion
+          </a>
+          <a
+            routerLink="/registro"
+            class="px-8 py-3.5 bg-amber-700 text-white rounded-full font-medium flex items-center justify-center gap-2 hover:bg-amber-800 transition-colors"
+          >
+            Registro
+          </a>
+        </div>
+      </div>
+      <div class="lg:w-1/2 w-full">
+        <div class="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl relative bg-stone-200 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-24 h-24 text-stone-300">
+            <path d="M4 4a2 2 0 012-2h10a2 2 0 012 2v16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0v16h10V4H6zm2 3h6v1.5H8V7zm0 3h6v1.5H8V10z" />
+          </svg>
+          <div class="absolute inset-0 bg-gradient-to-t from-stone-900/40 to-transparent"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Como funciona -->
+  <section class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-stone-900 font-serif mb-4">Como funciona el prestamo?</h2>
+        <p class="text-stone-500 max-w-2xl mx-auto">
+          Un proceso simple y rapido pensado para que no pierdas tiempo en filas.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div class="text-center flex flex-col items-center">
+          <div class="w-16 h-16 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-8 h-8">
+              <circle cx="11" cy="11" r="7" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-stone-900 mb-3">1. Busca tu libro</h3>
+          <p class="text-stone-600">Explora nuestro catalogo digital y verifica la disponibilidad en tiempo real.</p>
+        </div>
+        <div class="text-center flex flex-col items-center">
+          <div class="w-16 h-16 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8">
+              <path d="M4 4a2 2 0 012-2h10a2 2 0 012 2v16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0v16h10V4H6zm2 3h6v1.5H8V7zm0 3h6v1.5H8V10z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-stone-900 mb-3">2. Reserva o acude</h3>
+          <p class="text-stone-600">Con tu matricula puedes solicitar el prestamo directamente en el mostrador.</p>
+        </div>
+        <div class="text-center flex flex-col items-center">
+          <div class="w-16 h-16 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-8 h-8">
+              <circle cx="12" cy="12" r="9" />
+              <polyline points="12 7 12 12 15 15" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-stone-900 mb-3">3. Lee y devuelve</h3>
+          <p class="text-stone-600">Disfruta de la lectura y te notificaremos cuando tu fecha de entrega se acerque.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Novedades -->
+  <section class="py-24 bg-stone-50 border-t border-stone-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-end mb-10">
+        <div>
+          <h2 class="text-3xl font-bold text-stone-900 font-serif mb-2">Novedades bibliograficas</h2>
+          <p class="text-stone-500">Los ultimos titulos agregados a nuestro acervo.</p>
+        </div>
+        <a routerLink="/catalogo" class="hidden sm:flex items-center gap-1 text-amber-700 font-medium hover:text-amber-800 transition-colors">
+          Ver todo
+        </a>
+      </div>
+
+      @if (novedades().length > 0) {
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          @for (libro of novedades(); track libro.id) {
+            <div class="group">
+              <div class="aspect-[2/3] rounded-xl overflow-hidden bg-stone-200 mb-4 shadow-sm group-hover:shadow-md transition-all">
+                <app-book-cover [isbn]="libro.isbn" [titulo]="libro.titulo" />
+              </div>
+              <h3 class="font-bold text-stone-900 leading-tight group-hover:text-amber-700 transition-colors truncate">
+                {{ libro.titulo }}
+              </h3>
+              <p class="text-sm text-stone-500 mt-1 truncate">
+                {{ libro.autores.length ? libro.autores[0].nombre : 'Autor desconocido' }}
+              </p>
+            </div>
+          }
+        </div>
+      }
+      <a
+        routerLink="/catalogo"
+        class="sm:hidden mt-8 flex items-center justify-center gap-1 w-full py-3 bg-white border border-stone-200 rounded-xl text-stone-700 font-medium hover:bg-stone-50 transition-colors"
+      >
+        Ver todo
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-stone-900 text-stone-400 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 border-b border-stone-800 pb-8">
+        <div>
+          <div class="flex items-center gap-2 text-amber-500 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+              <path d="M4 4a2 2 0 012-2h10a2 2 0 012 2v16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0v16h10V4H6zm2 3h6v1.5H8V7zm0 3h6v1.5H8V10z" />
+            </svg>
+            <span class="font-semibold text-lg tracking-tight text-white">Agora</span>
+          </div>
+          <p class="text-sm">Sistema de Gestion de Biblioteca.<br />Universidad Autonoma.</p>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold mb-4">Enlaces rapidos</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a routerLink="/catalogo" class="hover:text-amber-500 transition-colors">Buscar en catalogo</a></li>
+            <li><a routerLink="/login" class="hover:text-amber-500 transition-colors">Iniciar sesion</a></li>
+            <li><a routerLink="/registro" class="hover:text-amber-500 transition-colors">Crear cuenta</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold mb-4">Horarios de atencion</h4>
+          <ul class="space-y-2 text-sm">
+            <li>Lunes a Viernes: 08:00 - 20:00</li>
+            <li>Sabados: 09:00 - 14:00</li>
+            <li>Domingos: Cerrado</li>
+          </ul>
+        </div>
+      </div>
+      <div class="text-sm text-center">&copy; 2026 Agora. Todos los derechos reservados.</div>
+    </div>
+  </footer>
+</div>

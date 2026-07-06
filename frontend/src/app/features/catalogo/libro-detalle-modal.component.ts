@@ -1,9 +1,11 @@
 import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 
+import { BookCoverComponent } from '../../shared/book-cover/book-cover.component';
 import { Libro } from './models/catalogo.model';
 
 @Component({
   selector: 'app-libro-detalle-modal',
+  imports: [BookCoverComponent],
   templateUrl: './libro-detalle-modal.component.html',
 })
 export class LibroDetalleModalComponent {

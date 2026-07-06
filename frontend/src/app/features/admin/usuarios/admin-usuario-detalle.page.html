@@ -20,9 +20,12 @@
     </div>
   } @else if (detalle(); as d) {
     <header class="mb-8 bg-white rounded-2xl border border-stone-100 shadow-sm p-6 flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-bold text-stone-900">{{ d.usuario.nombre }}</h1>
-        <p class="text-stone-500 text-sm mt-1">{{ d.usuario.email }} &middot; {{ d.usuario.matricula }}</p>
+      <div class="flex items-center gap-4">
+        <img [src]="urlAvatarUsuario(d.usuario.nombre)" [alt]="d.usuario.nombre" class="w-14 h-14 rounded-full shadow-sm shrink-0" />
+        <div>
+          <h1 class="text-2xl font-bold text-stone-900">{{ d.usuario.nombre }}</h1>
+          <p class="text-stone-500 text-sm mt-1">{{ d.usuario.email }} &middot; {{ d.usuario.matricula }}</p>
+        </div>
       </div>
       <span
         class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider"

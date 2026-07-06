@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 
 import { ToastService } from '../../../core/services/toast.service';
+import { BookCoverComponent } from '../../../shared/book-cover/book-cover.component';
 import { AccionMenu, ThreeDotMenuComponent } from '../../../shared/three-dot-menu/three-dot-menu.component';
 import { Autor, Categoria } from '../../catalogo/models/catalogo.model';
 import { CatalogoService } from '../../catalogo/services/catalogo.service';
@@ -23,7 +24,13 @@ const ACCIONES_FILA: AccionMenu[] = [{ etiqueta: 'Modificar' }, { etiqueta: 'Eli
 
 @Component({
   selector: 'app-admin-catalogo-page',
-  imports: [ThreeDotMenuComponent, LibroFormModalComponent, CategoriaFormModalComponent, ConfirmarEliminarModalComponent],
+  imports: [
+    ThreeDotMenuComponent,
+    LibroFormModalComponent,
+    CategoriaFormModalComponent,
+    ConfirmarEliminarModalComponent,
+    BookCoverComponent,
+  ],
   templateUrl: './admin-catalogo.page.html',
 })
 export class AdminCatalogoPageComponent {

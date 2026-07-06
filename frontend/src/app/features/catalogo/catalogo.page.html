@@ -31,12 +31,10 @@
     @if (cargando()) {
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
         @for (placeholder of placeholdersSkeleton; track $index) {
-          <div class="rounded-2xl bg-white border border-stone-100 shadow-sm overflow-hidden animate-pulse">
-            <div class="h-40 bg-stone-200"></div>
-            <div class="p-4 space-y-2">
-              <div class="h-4 w-3/4 bg-stone-200 rounded"></div>
-              <div class="h-3 w-1/2 bg-stone-200 rounded"></div>
-            </div>
+          <div class="flex flex-col">
+            <div class="aspect-[2/3] bg-stone-200 rounded-xl mb-3 animate-pulse"></div>
+            <div class="h-4 w-3/4 bg-stone-200 rounded animate-pulse mb-2"></div>
+            <div class="h-3 w-1/2 bg-stone-200 rounded animate-pulse"></div>
           </div>
         }
       </div>
@@ -50,32 +48,28 @@
           <button
             type="button"
             (click)="abrirDetalle(libro)"
-            class="text-left rounded-2xl bg-white border border-stone-100 shadow-sm hover:shadow-md hover:border-amber-200 transition-all overflow-hidden group"
+            class="text-left flex flex-col group focus-visible:outline-none"
           >
-            <div class="h-40 bg-stone-100 flex items-center justify-center border-b border-stone-100">
-              <span class="text-4xl text-stone-300">&#128214;</span>
+            <div
+              class="relative aspect-[2/3] rounded-xl overflow-hidden bg-stone-200 mb-3 shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1"
+            >
+              <app-book-cover [isbn]="libro.isbn" [titulo]="libro.titulo" />
+              <span
+                class="absolute top-2 right-2 text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wider shadow-sm text-white"
+                [class]="libro.disponible ? 'bg-emerald-600' : 'bg-red-600'"
+              >
+                {{ libro.disponible ? 'Disponible' : 'Prestado' }}
+              </span>
             </div>
-            <div class="p-4">
-              <p class="font-bold text-stone-900 group-hover:text-amber-700 transition-colors truncate">
-                {{ libro.titulo }}
-              </p>
-              <p class="text-stone-500 text-xs mt-0.5 truncate">
-                {{ libro.autores.length ? libro.autores[0].nombre : 'Autor desconocido' }}
-              </p>
-              <div class="flex items-center justify-between mt-3">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400">{{
-                  libro.categoria.nombre
-                }}</span>
-                <span
-                  class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
-                  [class]="
-                    libro.disponible ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'
-                  "
-                >
-                  {{ libro.disponible ? 'Disponible' : 'Prestado' }}
-                </span>
-              </div>
-            </div>
+            <p class="font-bold text-stone-900 group-hover:text-amber-700 transition-colors leading-tight truncate">
+              {{ libro.titulo }}
+            </p>
+            <p class="text-stone-500 text-xs mt-0.5 truncate">
+              {{ libro.autores.length ? libro.autores[0].nombre : 'Autor desconocido' }}
+            </p>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 mt-1">{{
+              libro.categoria.nombre
+            }}</span>
           </button>
         }
       </div>
