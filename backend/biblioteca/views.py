@@ -238,10 +238,12 @@ class MultaController(APIView):
         except RecursoNoEncontradoError as exc:
             return respuesta_estandar(False, exc.status_http, mensaje=exc.mensaje, detalle=exc.codigo)
         except ReglaDeNegocioError as exc:
-            if exc.codigo == 'SIN_ATRASO':
-                return respuesta_estandar(True, 200, datos=None, mensaje=exc.mensaje)
             return respuesta_estandar(False, exc.status_http, mensaje=exc.mensaje, detalle=exc.codigo)
 
+        if multa is None:
+            return respuesta_estandar(
+                True, 200, datos=None, mensaje='Devolucion registrada dentro del plazo; no se genera multa.',
+            )
         return respuesta_estandar(True, 201, datos=MultaSerializer(multa).data, mensaje='Multa procesada')
 
 

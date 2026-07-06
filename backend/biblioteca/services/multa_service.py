@@ -2,8 +2,8 @@ from django.db import transaction
 from django.utils import timezone
 
 from ..exceptions import ReglaDeNegocioError, RecursoNoEncontradoError
-from ..models import Bibliotecario, ConfiguracionBiblioteca, Multa, Usuario
-from ..repositories import multa_repository, prestamo_repository, usuario_repository
+from ..models import Bibliotecario, ConfiguracionBiblioteca, Devolucion, Multa, Prestamo, Usuario
+from ..repositories import libro_repository, multa_repository, prestamo_repository, usuario_repository
 
 
 class MultaService:
@@ -12,18 +12,29 @@ class MultaService:
         prestamo = prestamo_repository.buscar_por_id_con_bloqueo(prestamo_id)
         if prestamo is None:
             raise RecursoNoEncontradoError('Prestamo no encontrado')
+        if prestamo.estado == Prestamo.Estado.CERRADO:
+            raise ReglaDeNegocioError('PRESTAMO_YA_CERRADO', 'Este prestamo ya fue devuelto anteriormente')
 
         # 1) Dias de atraso (RN-02: coherencia cronologica)
         dias_atraso = (fecha_devolucion_real - prestamo.fecha_dev_esperada).days
 
-        if dias_atraso <= 0:
-            raise ReglaDeNegocioError('SIN_ATRASO', 'La devolucion se realizo dentro del plazo, no se genera multa')
+        # 2) La devolucion del ejemplar cierra el prestamo y libera el stock,
+        # exista o no atraso (antes solo ocurria si se generaba una multa).
+        if not Devolucion.objects.filter(prestamo=prestamo).exists():
+            Devolucion.objects.create(
+                prestamo=prestamo, fecha_devolucion=fecha_devolucion_real, condicion='Buen estado',
+            )
+        prestamo_repository.marcar_cerrado(prestamo)
+        libro_repository.reponer_stock(prestamo.libro)
 
-        # 2) Monto no editable, derivado de formula (RN-05)
+        if dias_atraso <= 0:
+            return None
+
+        # 3) Monto no editable, derivado de formula (RN-05)
         tarifa_diaria = ConfiguracionBiblioteca.cargar().tarifa_multa_diaria
         monto = round(tarifa_diaria * dias_atraso, 2)
 
-        # 3) Evitar duplicidad: actualizar si ya existe multa activa
+        # 4) Evitar duplicidad: actualizar si ya existe multa activa
         multa_existente = multa_repository.buscar_pendiente_por_prestamo(prestamo_id)
         if multa_existente is not None:
             multa_existente.monto = monto
@@ -35,7 +46,7 @@ class MultaService:
                 prestamo=prestamo, usuario_id=prestamo.usuario_id, monto=monto, dias_atraso=dias_atraso,
             )
 
-        # 4) Suspension automatica del usuario (RN-03)
+        # 5) Suspension automatica del usuario (RN-03)
         usuario = usuario_repository.buscar_por_id_con_bloqueo(prestamo.usuario_id)
         usuario.estado = Usuario.Estado.SUSPENDIDO
         usuario_repository.actualizar_estado(usuario)

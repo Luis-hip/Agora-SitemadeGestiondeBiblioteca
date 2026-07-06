@@ -19,6 +19,11 @@ def crear(*, usuario, libro, bibliotecario_id, fecha_dev_esperada):
     )
 
 
+def marcar_cerrado(prestamo):
+    prestamo.estado = Prestamo.Estado.CERRADO
+    prestamo.save(update_fields=['estado', 'updated_at'])
+
+
 def _con_relaciones(queryset):
     return queryset.select_related('libro__categoria', 'bibliotecario').prefetch_related('libro__autores')
 

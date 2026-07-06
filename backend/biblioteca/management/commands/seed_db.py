@@ -233,7 +233,9 @@ class Command(BaseCommand):
         prestamo.refresh_from_db()
 
         if estado in (Prestamo.Estado.ACTIVO, Prestamo.Estado.VENCIDO):
-            Libro.objects.filter(pk=libro.pk).update(disponible=False)
+            libro.refresh_from_db()
+            nuevo_stock = max(libro.stock - 1, 0)
+            Libro.objects.filter(pk=libro.pk).update(stock=nuevo_stock, disponible=nuevo_stock > 0)
 
         return prestamo
 
@@ -265,7 +267,8 @@ class Command(BaseCommand):
             Devolucion.objects.create(
                 prestamo=prestamo_multa, fecha_devolucion=fecha_devolucion_real, condicion='Buen estado',
             )
-            Libro.objects.filter(pk=libro_multa.pk).update(disponible=True)
+            libro_multa.refresh_from_db()
+            Libro.objects.filter(pk=libro_multa.pk).update(stock=libro_multa.stock + 1, disponible=True)
 
             tarifa_diaria = ConfiguracionBiblioteca.cargar().tarifa_multa_diaria
             Multa.objects.create(

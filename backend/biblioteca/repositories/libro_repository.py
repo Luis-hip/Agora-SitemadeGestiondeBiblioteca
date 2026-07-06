@@ -17,3 +17,15 @@ def buscar_por_id_con_bloqueo(libro_id):
 def marcar_no_disponible(libro):
     libro.disponible = False
     libro.save(update_fields=['disponible', 'updated_at'])
+
+
+def descontar_stock(libro):
+    libro.stock = max(libro.stock - 1, 0)
+    libro.disponible = libro.stock > 0
+    libro.save(update_fields=['stock', 'disponible', 'updated_at'])
+
+
+def reponer_stock(libro):
+    libro.stock += 1
+    libro.disponible = True
+    libro.save(update_fields=['stock', 'disponible', 'updated_at'])

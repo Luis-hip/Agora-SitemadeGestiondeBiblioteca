@@ -19,19 +19,43 @@
             class="px-8 py-3.5 bg-stone-900 text-white rounded-full font-medium flex items-center justify-center gap-2 hover:bg-stone-800 transition-colors"
           >
             Explorar Catalogo
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="w-4 h-4"
+            >
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
           </a>
-          <a
-            routerLink="/login"
-            class="px-8 py-3.5 bg-white border border-stone-300 text-stone-800 rounded-full font-medium flex items-center justify-center gap-2 hover:bg-stone-50 transition-colors"
-          >
-            Iniciar Sesion
-          </a>
-          <a
-            routerLink="/registro"
-            class="px-8 py-3.5 bg-amber-700 text-white rounded-full font-medium flex items-center justify-center gap-2 hover:bg-amber-800 transition-colors"
-          >
-            Registro
-          </a>
+          @if (!authService.estaAutenticado()) {
+            <a
+              routerLink="/login"
+              class="px-8 py-3.5 bg-white border border-stone-300 text-stone-800 rounded-full font-medium flex items-center justify-center gap-2 hover:bg-stone-50 transition-colors"
+            >
+              Iniciar Sesion
+            </a>
+            <a
+              routerLink="/registro"
+              class="px-8 py-3.5 bg-amber-700 text-white rounded-full font-medium flex items-center justify-center gap-2 hover:bg-amber-800 transition-colors"
+            >
+              Registro
+            </a>
+          } @else {
+            <a
+              [routerLink]="authService.actor()?.tipoActor === 'USUARIO' ? '/perfil' : '/admin'"
+              class="px-8 py-3.5 bg-amber-700 text-white rounded-full font-medium flex items-center justify-center gap-2 hover:bg-amber-800 transition-colors"
+            >
+              {{ authService.actor()?.tipoActor === 'USUARIO' ? 'Ir a mi Perfil' : 'Ir a mi Panel' }}
+            </a>
+          }
         </div>
       </div>
       <div class="lg:w-1/2 w-full">

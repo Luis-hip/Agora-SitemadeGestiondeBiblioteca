@@ -45,6 +45,6 @@ class PrestamoService:
             bibliotecario_id=bibliotecario_id,
             fecha_dev_esperada=fecha_dev_esperada,
         )
-        libro_repository.marcar_no_disponible(libro)
+        libro_repository.descontar_stock(libro)
 
         return nuevo_prestamo
