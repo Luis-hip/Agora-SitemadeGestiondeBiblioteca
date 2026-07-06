@@ -1,0 +1,100 @@
+<div class="min-h-screen bg-stone-50">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold text-stone-900 tracking-tight">Catalogo</h1>
+      <p class="text-stone-500 mt-1">Explora los libros disponibles en la biblioteca de Agora.</p>
+    </header>
+
+    <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
+      <div class="w-full sm:w-64">
+        <label class="block text-xs font-bold text-stone-500 uppercase tracking-wider mb-1.5">Categoria</label>
+        <select
+          class="w-full px-4 py-2.5 bg-white border border-stone-200 rounded-lg text-sm text-stone-700 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+          (change)="alCambiarCategoria($any($event.target).value)"
+        >
+          <option value="">Todas las categorias</option>
+          @for (categoria of categorias(); track categoria.id) {
+            <option [value]="categoria.id">{{ categoria.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <label class="flex items-center gap-2 text-sm text-stone-600 font-medium mt-2 sm:mt-6 cursor-pointer">
+        <input
+          type="checkbox"
+          class="w-4 h-4 rounded border-stone-300 text-amber-700 focus:ring-amber-500"
+          (change)="alCambiarSoloDisponibles($any($event.target).checked)"
+        />
+        Solo disponibles
+      </label>
+    </div>
+
+    @if (error()) {
+      <div class="mb-6 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium">
+        {{ error() }}
+      </div>
+    }
+
+    @if (cargando()) {
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+        @for (placeholder of placeholdersSkeleton; track $index) {
+          <div class="rounded-2xl bg-white border border-stone-100 shadow-sm overflow-hidden animate-pulse">
+            <div class="h-40 bg-stone-200"></div>
+            <div class="p-4 space-y-2">
+              <div class="h-4 w-3/4 bg-stone-200 rounded"></div>
+              <div class="h-3 w-1/2 bg-stone-200 rounded"></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else if (libros().length === 0) {
+      <div class="text-center py-20 text-stone-400">
+        <p class="text-lg font-medium">No se encontraron libros con estos filtros.</p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+        @for (libro of libros(); track libro.id) {
+          <button
+            type="button"
+            (click)="abrirDetalle(libro)"
+            class="text-left rounded-2xl bg-white border border-stone-100 shadow-sm hover:shadow-md hover:border-amber-200 transition-all overflow-hidden group"
+          >
+            <div class="h-40 bg-stone-100 flex items-center justify-center border-b border-stone-100">
+              <span class="text-4xl text-stone-300">&#128214;</span>
+            </div>
+            <div class="p-4">
+              <p class="font-bold text-stone-900 group-hover:text-amber-700 transition-colors truncate">
+                {{ libro.titulo }}
+              </p>
+              <p class="text-stone-500 text-xs mt-0.5 truncate">
+                {{ libro.autores.length ? libro.autores[0].nombre : 'Autor desconocido' }}
+              </p>
+              <div class="flex items-center justify-between mt-3">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400">{{
+                  libro.categoria.nombre
+                }}</span>
+                <span
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                  [class]="
+                    libro.disponible ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'
+                  "
+                >
+                  {{ libro.disponible ? 'Disponible' : 'Prestado' }}
+                </span>
+              </div>
+            </div>
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  @if (libroSeleccionado(); as libro) {
+    <app-libro-detalle-modal
+      [libro]="libro"
+      [enviando]="enviandoPrestamo()"
+      (cerrar)="cerrarDetalle()"
+      (solicitarPrestamo)="confirmarPrestamo(libro)"
+    />
+  }
+</div>

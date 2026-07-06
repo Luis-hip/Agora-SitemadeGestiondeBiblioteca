@@ -22,3 +22,7 @@ def existe_email(email):
 
 def existe_matricula(matricula):
     return Usuario.objects.filter(matricula=matricula).exists()
+
+
+def buscar_por_id_con_bloqueo(usuario_id):
+    return Usuario.objects.select_for_update().filter(pk=usuario_id).first()

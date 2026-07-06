@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.contrib.auth.password_validation import validate_password as validar_password_django
 from rest_framework import serializers
 
-from .models import Usuario, matricula_validator, telefono_validator
+from .models import Autor, Categoria, Libro, Prestamo, Usuario, matricula_validator, telefono_validator
 from .repositories import usuario_repository
 
 
@@ -41,3 +41,38 @@ class RegistroUsuarioSerializer(serializers.Serializer):
 class LoginSerializer(serializers.Serializer):
     identificador = serializers.CharField()
     password = serializers.CharField(write_only=True)
+
+
+class AutorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Autor
+        fields = ['id', 'nombre', 'nacionalidad']
+
+
+class CategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categoria
+        fields = ['id', 'nombre', 'descripcion']
+
+
+class LibroSerializer(serializers.ModelSerializer):
+    categoria = CategoriaSerializer(read_only=True)
+    autores = AutorSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Libro
+        fields = ['id', 'titulo', 'isbn', 'fecha_publicacion', 'disponible', 'categoria', 'autores']
+
+
+class PrestamoSerializer(serializers.ModelSerializer):
+    libro = LibroSerializer(read_only=True)
+
+    class Meta:
+        model = Prestamo
+        fields = ['id', 'usuario', 'bibliotecario', 'libro', 'fecha_inicio', 'fecha_dev_esperada', 'estado']
+        read_only_fields = fields
+
+
+class PrestamoRequestSerializer(serializers.Serializer):
+    libro_id = serializers.IntegerField()
+    usuario_id = serializers.IntegerField(required=False)

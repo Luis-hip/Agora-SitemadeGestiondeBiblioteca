@@ -3,3 +3,4 @@ psycopg2-binary==2.9.12
 djangorestframework==3.17.1
 djangorestframework-simplejwt==5.5.1
 python-decouple==3.8
+django-cors-headers==4.9.0

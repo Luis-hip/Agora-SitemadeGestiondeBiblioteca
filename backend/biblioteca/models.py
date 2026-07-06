@@ -197,7 +197,9 @@ class Prestamo(TimestampedModel):
         VENCIDO = 'VENCIDO', 'Vencido'
 
     usuario = models.ForeignKey(Usuario, on_delete=models.PROTECT, related_name='prestamos')
-    bibliotecario = models.ForeignKey(Bibliotecario, on_delete=models.PROTECT, related_name='prestamos_gestionados')
+    bibliotecario = models.ForeignKey(
+        Bibliotecario, on_delete=models.PROTECT, related_name='prestamos_gestionados', null=True, blank=True,
+    )
     libro = models.ForeignKey(Libro, on_delete=models.PROTECT, related_name='prestamos')
     fecha_inicio = models.DateField(auto_now_add=True)
     fecha_dev_esperada = models.DateField()
