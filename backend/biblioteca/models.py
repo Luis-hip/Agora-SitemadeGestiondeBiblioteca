@@ -63,11 +63,16 @@ class Usuario(AbstractBaseUser, PermissionsMixin, TimestampedModel):
         ACTIVO = 'ACTIVO', 'Activo'
         SUSPENDIDO = 'SUSPENDIDO', 'Suspendido'
 
+    class TipoUsuario(models.TextChoices):
+        ESTUDIANTE = 'ESTUDIANTE', 'Estudiante'
+        PROFESOR = 'PROFESOR', 'Profesor'
+
     matricula = models.CharField(max_length=9, unique=True, validators=[matricula_validator])
     nombre = models.CharField(max_length=150)
     email = models.EmailField(unique=True)
     telefono = models.CharField(max_length=15, validators=[telefono_validator])
     estado = models.CharField(max_length=10, choices=Estado.choices, default=Estado.ACTIVO)
+    tipo_usuario = models.CharField(max_length=20, choices=TipoUsuario.choices, default=TipoUsuario.ESTUDIANTE)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
