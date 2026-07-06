@@ -31,6 +31,6 @@ export interface Prestamo {
 }
 
 export interface FiltrosCatalogo {
-  categoriaId?: number | null;
+  categoriaIds?: number[];
   soloDisponibles?: boolean;
 }

@@ -15,8 +15,21 @@ def _parsear_disponible(valor):
     return None
 
 
+def _parsear_categoria_ids(valor):
+    if not valor:
+        return None
+    ids = []
+    for parte in str(valor).split(','):
+        parte = parte.strip()
+        if parte.isdigit():
+            ids.append(int(parte))
+    return ids or None
+
+
 def listar_libros(categoria_id=None, disponible=None):
-    return libro_repository.listar(categoria_id=categoria_id, disponible=_parsear_disponible(disponible))
+    return libro_repository.listar(
+        categoria_ids=_parsear_categoria_ids(categoria_id), disponible=_parsear_disponible(disponible),
+    )
 
 
 def listar_categorias():

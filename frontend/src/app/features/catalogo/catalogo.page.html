@@ -5,28 +5,21 @@
       <p class="text-stone-500 mt-1">Explora los libros disponibles en la biblioteca de Agora.</p>
     </header>
 
-    <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
-      <div class="w-full sm:w-64">
-        <label class="block text-xs font-bold text-stone-500 uppercase tracking-wider mb-1.5">Categoria</label>
-        <select
-          class="w-full px-4 py-2.5 bg-white border border-stone-200 rounded-lg text-sm text-stone-700 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
-          (change)="alCambiarCategoria($any($event.target).value)"
-        >
-          <option value="">Todas las categorias</option>
-          @for (categoria of categorias(); track categoria.id) {
-            <option [value]="categoria.id">{{ categoria.nombre }}</option>
-          }
-        </select>
-      </div>
-
-      <label class="flex items-center gap-2 text-sm text-stone-600 font-medium mt-2 sm:mt-6 cursor-pointer">
-        <input
-          type="checkbox"
-          class="w-4 h-4 rounded border-stone-300 text-amber-700 focus:ring-amber-500"
-          (change)="alCambiarSoloDisponibles($any($event.target).checked)"
-        />
-        Solo disponibles
-      </label>
+    <div class="flex items-center gap-3 mb-8">
+      <button
+        type="button"
+        (click)="abrirFiltros()"
+        class="relative flex items-center gap-2 px-5 py-2.5 bg-white border border-stone-200 text-stone-700 rounded-lg text-sm font-bold hover:bg-stone-50 hover:border-amber-300 transition-colors shadow-sm"
+      >
+        Filtros
+        @if (cantidadFiltrosActivos() > 0) {
+          <span
+            class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded-full bg-amber-600 text-white text-[11px] font-bold"
+          >
+            {{ cantidadFiltrosActivos() }}
+          </span>
+        }
+      </button>
     </div>
 
     @if (error()) {
@@ -95,6 +88,16 @@
       [enviando]="enviandoPrestamo()"
       (cerrar)="cerrarDetalle()"
       (solicitarPrestamo)="confirmarPrestamo(libro)"
+    />
+  }
+
+  @if (modalFiltrosAbierto()) {
+    <app-filtros-catalogo-modal
+      [categorias]="categorias()"
+      [categoriaIdsIniciales]="categoriaIdsSeleccionadas()"
+      [soloDisponiblesInicial]="soloDisponibles()"
+      (cerrar)="cerrarFiltros()"
+      (aplicar)="aplicarFiltros($event)"
     />
   }
 </div>

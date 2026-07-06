@@ -1,0 +1,96 @@
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+  <div
+    class="absolute inset-0 bg-stone-900/50 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
+    (click)="cerrar.emit()"
+  ></div>
+
+  <div
+    class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]"
+  >
+    <div class="px-8 py-6 border-b border-stone-100 flex items-center justify-between shrink-0">
+      <h2 class="text-xl font-bold text-stone-900">Filtros Avanzados</h2>
+      <button
+        type="button"
+        (click)="cerrar.emit()"
+        class="p-2 text-stone-400 hover:text-stone-700 hover:bg-stone-100 rounded-full transition-colors"
+        aria-label="Cerrar"
+      >
+        &times;
+      </button>
+    </div>
+
+    <div class="px-8 py-6 overflow-y-auto flex-1 space-y-8 bg-stone-50/30">
+      <div>
+        <h3 class="text-sm font-bold text-stone-900 uppercase tracking-wider mb-4">Por Categoria</h3>
+        <div class="space-y-3">
+          @for (categoria of categorias; track categoria.id) {
+            <label class="flex items-center gap-3 text-stone-600 cursor-pointer group">
+              <div class="relative flex items-center justify-center w-5 h-5 shrink-0">
+                <input
+                  type="checkbox"
+                  [checked]="estaSeleccionada(categoria.id)"
+                  (change)="alternarCategoria(categoria.id, $any($event.target).checked)"
+                  class="peer absolute w-full h-full opacity-0 cursor-pointer"
+                />
+                <div
+                  class="w-5 h-5 border-2 border-stone-300 rounded transition-colors group-hover:border-amber-500 peer-checked:bg-amber-600 peer-checked:border-amber-600 peer-focus-visible:ring-2 peer-focus-visible:ring-amber-500/40"
+                ></div>
+                <svg
+                  class="absolute w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.7 5.3a1 1 0 010 1.4l-7.4 7.4a1 1 0 01-1.4 0L3.3 9.5a1 1 0 111.4-1.4l3.9 3.9 6.7-6.7a1 1 0 011.4 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <span class="text-[15px] group-hover:text-stone-900 transition-colors">{{ categoria.nombre }}</span>
+            </label>
+          }
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-sm font-bold text-stone-900 uppercase tracking-wider mb-4">Disponibilidad</h3>
+        <label class="flex items-center gap-3 text-stone-600 cursor-pointer group">
+          <div class="relative flex items-center justify-center w-5 h-5 shrink-0">
+            <input
+              type="checkbox"
+              [checked]="soloDisponibles()"
+              (change)="alCambiarSoloDisponibles($any($event.target).checked)"
+              class="peer absolute w-full h-full opacity-0 cursor-pointer"
+            />
+            <div
+              class="w-5 h-5 border-2 border-stone-300 rounded transition-colors group-hover:border-amber-500 peer-checked:bg-amber-600 peer-checked:border-amber-600 peer-focus-visible:ring-2 peer-focus-visible:ring-amber-500/40"
+            ></div>
+            <svg
+              class="absolute w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M16.7 5.3a1 1 0 010 1.4l-7.4 7.4a1 1 0 01-1.4 0L3.3 9.5a1 1 0 111.4-1.4l3.9 3.9 6.7-6.7a1 1 0 011.4 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+          <span class="text-[15px] group-hover:text-stone-900 transition-colors">Solo disponibles</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="p-6 shrink-0 border-t border-stone-100">
+      <button
+        type="button"
+        (click)="aplicarFiltros()"
+        class="w-full bg-stone-900 hover:bg-amber-700 text-white py-4 rounded-xl font-bold text-base transition-colors shadow-lg shadow-stone-900/20"
+      >
+        Aplicar Filtros
+      </button>
+    </div>
+  </div>
+</div>

@@ -11,8 +11,8 @@ export class CatalogoService {
 
   async listarLibros(filtros: FiltrosCatalogo = {}): Promise<Libro[]> {
     let params = new HttpParams();
-    if (filtros.categoriaId) {
-      params = params.set('categoria', filtros.categoriaId);
+    if (filtros.categoriaIds && filtros.categoriaIds.length > 0) {
+      params = params.set('categoria', filtros.categoriaIds.join(','));
     }
     if (filtros.soloDisponibles) {
       params = params.set('disponible', 'true');

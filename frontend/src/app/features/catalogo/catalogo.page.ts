@@ -1,7 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 
 import { ToastService } from '../../core/services/toast.service';
+import { FiltrosCatalogoModalComponent, FiltrosSeleccionados } from './filtros-catalogo-modal.component';
 import { LibroDetalleModalComponent } from './libro-detalle-modal.component';
 import { Categoria, Libro } from './models/catalogo.model';
 import { CatalogoService } from './services/catalogo.service';
@@ -9,7 +10,7 @@ import { PrestamoService } from './services/prestamo.service';
 
 @Component({
   selector: 'app-catalogo-page',
-  imports: [LibroDetalleModalComponent],
+  imports: [LibroDetalleModalComponent, FiltrosCatalogoModalComponent],
   templateUrl: './catalogo.page.html',
 })
 export class CatalogoPageComponent {
@@ -22,8 +23,13 @@ export class CatalogoPageComponent {
   protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
 
-  protected readonly categoriaSeleccionada = signal<number | null>(null);
+  protected readonly categoriaIdsSeleccionadas = signal<number[]>([]);
   protected readonly soloDisponibles = signal(false);
+  protected readonly modalFiltrosAbierto = signal(false);
+
+  protected readonly cantidadFiltrosActivos = computed(
+    () => this.categoriaIdsSeleccionadas().length + (this.soloDisponibles() ? 1 : 0),
+  );
 
   protected readonly libroSeleccionado = signal<Libro | null>(null);
   protected readonly enviandoPrestamo = signal(false);
@@ -37,18 +43,24 @@ export class CatalogoPageComponent {
       .catch(() => this.toast.error('No se pudieron cargar las categorias.'));
 
     effect(() => {
-      const categoriaId = this.categoriaSeleccionada();
+      const categoriaIds = this.categoriaIdsSeleccionadas();
       const soloDisponibles = this.soloDisponibles();
-      this.cargarLibros(categoriaId, soloDisponibles);
+      this.cargarLibros(categoriaIds, soloDisponibles);
     });
   }
 
-  protected alCambiarCategoria(valor: string): void {
-    this.categoriaSeleccionada.set(valor ? Number(valor) : null);
+  protected abrirFiltros(): void {
+    this.modalFiltrosAbierto.set(true);
   }
 
-  protected alCambiarSoloDisponibles(marcado: boolean): void {
-    this.soloDisponibles.set(marcado);
+  protected cerrarFiltros(): void {
+    this.modalFiltrosAbierto.set(false);
+  }
+
+  protected aplicarFiltros(filtros: FiltrosSeleccionados): void {
+    this.categoriaIdsSeleccionadas.set(filtros.categoriaIds);
+    this.soloDisponibles.set(filtros.soloDisponibles);
+    this.modalFiltrosAbierto.set(false);
   }
 
   protected abrirDetalle(libro: Libro): void {
@@ -65,7 +77,7 @@ export class CatalogoPageComponent {
       await this.prestamoService.solicitarPrestamo(libro.id);
       this.toast.exito(`Prestamo solicitado: ${libro.titulo}`);
       setTimeout(() => this.libroSeleccionado.set(null), 600);
-      await this.cargarLibros(this.categoriaSeleccionada(), this.soloDisponibles());
+      await this.cargarLibros(this.categoriaIdsSeleccionadas(), this.soloDisponibles());
     } catch (err) {
       const error = err as HttpErrorResponse;
       const mensaje = error.error?.mensaje ?? 'No se pudo procesar la solicitud de prestamo.';
@@ -79,11 +91,11 @@ export class CatalogoPageComponent {
     }
   }
 
-  private async cargarLibros(categoriaId: number | null, soloDisponibles: boolean): Promise<void> {
+  private async cargarLibros(categoriaIds: number[], soloDisponibles: boolean): Promise<void> {
     this.cargando.set(true);
     this.error.set(null);
     try {
-      const libros = await this.catalogoService.listarLibros({ categoriaId, soloDisponibles });
+      const libros = await this.catalogoService.listarLibros({ categoriaIds, soloDisponibles });
       this.libros.set(libros);
     } catch {
       this.error.set('No se pudo cargar el catalogo. Intenta de nuevo mas tarde.');

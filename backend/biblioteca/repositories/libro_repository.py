@@ -1,10 +1,10 @@
 from ..models import Libro
 
 
-def listar(categoria_id=None, disponible=None):
+def listar(categoria_ids=None, disponible=None):
     queryset = Libro.objects.select_related('categoria').prefetch_related('autores')
-    if categoria_id:
-        queryset = queryset.filter(categoria_id=categoria_id)
+    if categoria_ids:
+        queryset = queryset.filter(categoria_id__in=categoria_ids)
     if disponible is not None:
         queryset = queryset.filter(disponible=disponible)
     return queryset
