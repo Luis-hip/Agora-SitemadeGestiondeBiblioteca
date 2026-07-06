@@ -10,4 +10,8 @@ export const routes: Routes = [
     path: 'catalogo',
     loadComponent: () => import('./features/catalogo/catalogo.page').then((m) => m.CatalogoPageComponent),
   },
+  {
+    path: 'perfil',
+    loadComponent: () => import('./features/perfil/perfil.page').then((m) => m.PerfilPageComponent),
+  },
 ];

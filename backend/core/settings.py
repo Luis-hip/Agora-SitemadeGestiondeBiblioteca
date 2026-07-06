@@ -95,6 +95,11 @@ DATABASES = {
 AUTH_USER_MODEL = 'biblioteca.Usuario'
 
 
+# Reglas de negocio (Fase 2 - PIM, seccion 2.2)
+# RN-05: tarifa diaria usada por MultaService para calcular el monto de una multa.
+TARIFA_MULTA_DIA = config('TARIFA_MULTA_DIA', default=5.00, cast=float)
+
+
 # CORS: el frontend Angular corre en un origen distinto (localhost:4200) en desarrollo.
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS', default='http://localhost:4200', cast=Csv(),

@@ -26,3 +26,7 @@ def existe_matricula(matricula):
 
 def buscar_por_id_con_bloqueo(usuario_id):
     return Usuario.objects.select_for_update().filter(pk=usuario_id).first()
+
+
+def actualizar_estado(usuario):
+    usuario.save(update_fields=['estado', 'updated_at'])

@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.contrib.auth.password_validation import validate_password as validar_password_django
 from rest_framework import serializers
 
-from .models import Autor, Categoria, Libro, Prestamo, Usuario, matricula_validator, telefono_validator
+from .models import Autor, Categoria, Libro, Multa, Prestamo, Usuario, matricula_validator, telefono_validator
 from .repositories import usuario_repository
 
 
@@ -76,3 +76,24 @@ class PrestamoSerializer(serializers.ModelSerializer):
 class PrestamoRequestSerializer(serializers.Serializer):
     libro_id = serializers.IntegerField()
     usuario_id = serializers.IntegerField(required=False)
+
+
+class UsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Usuario
+        fields = ['id', 'nombre', 'email', 'matricula', 'telefono', 'estado', 'tipo_usuario']
+        read_only_fields = fields
+
+
+class MultaSerializer(serializers.ModelSerializer):
+    prestamo = PrestamoSerializer(read_only=True)
+
+    class Meta:
+        model = Multa
+        fields = ['id', 'prestamo', 'monto', 'dias_atraso', 'estado', 'fecha_generacion', 'fecha_pago']
+        read_only_fields = fields
+
+
+class CalculoMultaRequestSerializer(serializers.Serializer):
+    prestamo_id = serializers.IntegerField()
+    fecha_devolucion_real = serializers.DateField()

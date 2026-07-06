@@ -1,0 +1,94 @@
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+  <div
+    class="absolute inset-0 bg-stone-900/60 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
+    (click)="cerrar.emit()"
+  ></div>
+
+  <div
+    class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+  >
+    <div class="px-6 py-5 border-b border-stone-100 flex items-center justify-between bg-stone-50/50">
+      <span
+        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border"
+        [class]="
+          multa.estado === 'PENDIENTE'
+            ? 'bg-orange-100 text-orange-800 border-orange-200'
+            : 'bg-stone-100 text-stone-700 border-stone-300'
+        "
+      >
+        {{ multa.estado === 'PENDIENTE' ? 'Multa Pendiente' : 'Multa Pagada' }}
+      </span>
+      <button
+        type="button"
+        (click)="cerrar.emit()"
+        class="p-2 text-stone-400 hover:text-stone-700 hover:bg-stone-100 rounded-full transition-colors"
+        aria-label="Cerrar"
+      >
+        &times;
+      </button>
+    </div>
+
+    <div class="p-6 md:p-8">
+      <div class="flex gap-5 mb-6">
+        <div
+          class="w-20 h-28 shrink-0 rounded-lg overflow-hidden bg-stone-100 border border-stone-200 shadow-sm flex items-center justify-center"
+        >
+          <span class="text-3xl text-stone-300">&#128214;</span>
+        </div>
+        <div class="flex flex-col pt-1 min-w-0">
+          <h3 class="text-lg font-bold text-stone-900 leading-tight mb-1 truncate">
+            {{ multa.prestamo.libro.titulo }}
+          </h3>
+          <p class="text-stone-500 text-sm">
+            {{ multa.prestamo.libro.autores.length ? multa.prestamo.libro.autores[0].nombre : 'Autor desconocido' }}
+          </p>
+        </div>
+      </div>
+
+      <div class="space-y-3 py-5 px-5 bg-stone-50 rounded-2xl border border-stone-100 text-sm">
+        <div class="flex justify-between items-center">
+          <span class="text-stone-500 font-bold">Fecha limite de devolucion</span>
+          <span class="font-medium text-stone-900">{{ multa.prestamo.fecha_dev_esperada }}</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-stone-500 font-bold">Dias de atraso</span>
+          <span class="font-medium text-stone-900">{{ multa.dias_atraso }}</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-stone-500 font-bold">Generada el</span>
+          <span class="font-medium text-stone-900">{{ multa.fecha_generacion }}</span>
+        </div>
+        @if (multa.fecha_pago) {
+          <div class="flex justify-between items-center">
+            <span class="text-stone-500 font-bold">Pagada el</span>
+            <span class="font-medium text-stone-900">{{ multa.fecha_pago }}</span>
+          </div>
+        }
+        <div class="flex justify-between items-center pt-2 border-t border-stone-200">
+          <span class="text-stone-500 font-bold">Monto total</span>
+          <span class="font-bold text-red-600 text-lg">${{ multa.monto }} MXN</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="px-6 py-5 bg-white border-t border-stone-100 flex justify-end gap-3">
+      <button
+        type="button"
+        (click)="cerrar.emit()"
+        class="px-5 py-2.5 text-sm font-bold text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-xl transition-colors"
+      >
+        Cerrar
+      </button>
+      @if (multa.estado === 'PENDIENTE') {
+        <button
+          type="button"
+          [disabled]="pagando"
+          (click)="pagarAhora.emit()"
+          class="px-6 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 disabled:bg-stone-300 disabled:cursor-not-allowed rounded-xl transition-colors shadow-md"
+        >
+          {{ pagando ? 'Procesando...' : 'Pagar ahora' }}
+        </button>
+      }
+    </div>
+  </div>
+</div>
